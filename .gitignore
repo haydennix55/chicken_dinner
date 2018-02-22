@@ -38,3 +38,4 @@ lib/
 
 # Ignore MAC specific files
 .DS_Store
+*.dSYM
