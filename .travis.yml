@@ -9,3 +9,13 @@ script:
     - make test
     - bin/app
     - bin/test
+    
+ notifications:
+    email:
+        recipients:
+            - hani2284@colorado.edu
+            - 7208847579@vtext.com
+        on_success: change
+        on_failure: always
+        on_error: always
+        on_pull_requests: false
