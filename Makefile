@@ -15,7 +15,7 @@ INC := -I include
 
 $(TARGET): $(OBJECTS)
 	@echo " Linking...";
-	@echo " $(CC) $^ -o $(TARGET)"; $(CC) $^ -o bin/app
+	@echo " $(CC) $^ -o $(TARGET)"; $(CC) $^ -o $(TARGET)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@mkdir -p $(BUILDDIR)

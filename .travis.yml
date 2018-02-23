@@ -1,8 +1,9 @@
 language: cpp
-compiler: gcc
+compiler: g++
+os: osx
 
 script:
     - make
     - make test
-    - ./bin/main
-    - ./bin/test
+    - bin/main
+    - bin/test
