@@ -5,5 +5,5 @@ os: osx
 script:
     - make
     - make test
-    - bin/main
+    - bin/app
     - bin/test
