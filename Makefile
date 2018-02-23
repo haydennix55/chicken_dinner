@@ -2,7 +2,10 @@ CC := g++
 SRCDIR := src
 BUILDDIR := build
 TARGET := bin/app
-DSYM := bin/app.dSYM
+TESTTARGET := bin/test
+DSYM := bin/*.dSYM
+TEST := test/test.cpp
+TESTLINK := test/test.cpp src/Blackjack.cpp
 
 SRCEXT := cpp
 SOURCES := $(shell find $(SRCDIR) -type f -name *.$(SRCEXT))
@@ -18,6 +21,12 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.$(SRCEXT)
 	@mkdir -p $(BUILDDIR)
 	@echo " $(CC) $(CFLAGS) $(INC) -c -o $@ $<"; $(CC) $(CFLAGS) $(INC) -c -o $@ $<
 
+test: $(OBJECTS)
+	 $(CC) $(CFLAGS) $(TEST) $(INC) -c -o $(BUILDDIR)/test.o
+	 $(CC) $(CFLAGS) $(TESTLINK) $(INC) -o $(TESTTARGET)
+
 clean:
 	@echo " Cleaning...";
-	@echo " $(RM) -r $(BUILDDIR) $(TARGET)"; $(RM) -r $(BUILDDIR) $(TARGET) $(DSYM)
+	@echo " $(RM) -r $(BUILDDIR) $(TARGET)"; $(RM) -r $(BUILDDIR) $(TARGET) bin/test $(DSYM)
+
+.PHONY: clean test
