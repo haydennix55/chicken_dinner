@@ -27,12 +27,13 @@
 *.lib
 
 # Executables
+bin/app
+bin/test
 *.exe
 *.out
 *.app
 
 # Folders that hold executables and objects
-bin/
 build/
 lib/
 
