@@ -1,6 +1,6 @@
 language: cpp
 compiler: g++
-os: 
+os:
     - osx
     - linux
 
@@ -9,8 +9,8 @@ script:
     - make test
     - bin/app
     - bin/test
-    
- notifications:
+
+notifications:
     email:
         recipients:
             - hani2284@colorado.edu
