@@ -23,11 +23,11 @@
         
         a. What I Had Planned
         
-           I would like to have all the game functionality of blackjack working. This would be any part of the code that would be required to play a game if this was an application to do so. It (the program) should be able to play rounds (without strategy).
+        * I would like to have all the game functionality of blackjack working. This would be any part of the code that would be required to play a game if this was an application to do so. It (the program) should be able to play rounds (without strategy).
          
         b. Changes
         
-           I don't currently forsee any changes.
+        * I don't currently forsee any changes.
            
    
           
