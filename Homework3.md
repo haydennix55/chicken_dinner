@@ -9,15 +9,13 @@
    
       I was able to get all the different technologies set up. 
       * I created my repo with an organized file structure, and a fairly intense Makefile that allows for making the project ( and storing the object files ), making the test suite, and cleaning.
-      * I downloaded the Catch header file and set up a test file. I used it to run some initial "tests of the tests", but didn't push them to version control.
+      * I downloaded the Catch header file and set up a test file. I used it to run some initial "tests of the tests", but didn't push them to version control. I implemented enums Suit and Value and struct Card, and a test to show that Catch (and Travis are working)
       * I set up Travis-CI to build the project on Mac OSX and Linux, and run the test suite. This runs whenever there is a push to any branch, and will notify me of failing builds or test suites by phone and email.
       * I downloaded Qt Creator, and have made a menu page with buttons to link to the three main functionalities.
-         * I didn't integrate the Qt code with my source code file structure. I found the Qt Creator IDE a little cluttered, so I'll be developing the source code seperately and integrating them together. 
+         * I didn't integrate the Qt code with my source code file structure. I found the Qt Creator IDE a little cluttered, so I'll be developing the source code seperately and integrating them together. Instead, I put the GUI directory in the repo (chicken_dinner_gui).
          * I am using Qt rather than FLTK. This is because this is the tool we will be using in class, and the IDE Qt Creator adds abstraction over the tedium of GUI development.
       * I created a SWAMP account, which is a free cybersecurity tool for testing code with multiple tools.
          * We talked about this in my cybersecurity class and how no security framework is comprehensive, so I chose SWAMP over YASCA. The SWAMP allows you to run multiple frameworks and get a summary of vulnerabilities.
-       
-      I was also able to get a small GUI created of a Menu. Here is a screenshot:
       
    3. Next Deadline
         
@@ -27,7 +25,18 @@
          
         b. Changes
         
-        * I don't currently forsee any changes.
+        * I don't currently forsee any changes other than that I will be using Qt and SWAMP rather than FLTK and YASCA.
+        
+   4. Screenshots
+      
+      Travis Build History Page:
+      ![travis build page](doc/screenshots/travis_init.jpg)
+      
+      Swamp Homepage:
+      ![swamp home page](doc/screenshots/swap_init.jpg)
+      
+      Initial GUI via Qt:
+      ![initial gui](doc/screenshots/gui_init.jpg)
            
    
           
