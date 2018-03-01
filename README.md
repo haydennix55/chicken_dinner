@@ -13,26 +13,34 @@ These instructions will allow you to see where I am at. These will be updated as
 
 ### Prerequisites
 
-TODO: Determine other prereqs
-The code is currently tested on Linux and Mac OS X. 
+The code is currently tested on Linux and Mac OS X. On these operating systems, there should be no prereqs to build and run the source code. Because the GUI has not been packaged and deployed, it will require Qt Creator to build and run.
 
 ### Downloading and Running Application
 
-TODO: Add notes about running app
+This section is currently not applicable. This will be filled when there is a packaged application.
 
 ### Development
 
-* __Download and Run Source Code__
+Start by cloning the repository to your local machine.
 
-      TODO: Add notes about cloning and running
+* __Download, Build, and Run Source Code__
+     
+   * Use the following commands to build and run:
+     
+      * `make` - generates executable `bin/app` using `main.cpp` and `src/Blackjack.cpp`, and places object files in `build/`. Use `./bin/app` to run. 
+           
+      * `make test` - generates executable `bin/test/` using `test.cpp` and the object files in `build/`. If they are not created, it will first run `make`. Use `./bin/test` to run the test suite.
+      
+      * `make clean` - cleans the directory by deleting the `build/` directory and both `bin/app` and `bin/test` executables.
 
 * __Run Catch Test Suite__
 
-      TODO: Add notes about running tests
+   * See above about command `make test`
 
-* __Deployment of Application__
+* __Build and__
 
-      TODO: Add notes about deploying with Qt
+   * Open Qt Creator
+   TODO: FINISH
 
 ## Tools
 
