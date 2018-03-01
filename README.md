@@ -37,10 +37,15 @@ Start by cloning the repository to your local machine.
 
    * See above about command `make test`
 
-* __Build and__
+* __Build and Run GUI__
 
    * Open Qt Creator
-   TODO: FINISH
+   
+   * Select "Open Project"
+   
+   * Select the `chicken_dinner_gui.pro` file inside `chicken_dinner/chicken_dinner_gui`
+   
+   * Click the play button to build and run
 
 ## Tools
 
@@ -51,5 +56,5 @@ Start by cloning the repository to your local machine.
 
 ## License
 
-TODO: Apache Liscence
+Apache 2.0 License Summary: You can do what you like with the software, as long as you include the required notices. This permissive license contains a patent license from the contributors of the code.
 
