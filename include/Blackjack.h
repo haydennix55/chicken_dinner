@@ -2,6 +2,7 @@
 #define _BLACKJACK_H_
 
 #include <vector>
+#include <string>
 
 enum class Value { Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, J, Q, K, A};
 enum class Suit { Spades, Diamonds, Clubs, Hearts};

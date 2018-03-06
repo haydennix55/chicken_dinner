@@ -2,6 +2,7 @@
 #include "catch.hpp"
 
 #include "Blackjack.h"
+#include <string>
 
 TEST_CASE("Card struct","[card]"){
     Card *a = new Card(Suit::Spades, Value::A);
