@@ -4,12 +4,93 @@
 #include "Blackjack.h"
 
 TEST_CASE("Card struct","[card]"){
+    Card *a = new Card(Suit::Spades, Value::A);
     SECTION("can be created successfully and accessed"){
-        Card c(Suit::Spades, Value::A);
-        REQUIRE(c.get_val() == Value::A);
-        REQUIRE(c.get_suit() == Suit::Spades);
+        REQUIRE(a->get_val() == Value::A);
+        REQUIRE(a->get_suit() == Suit::Spades);
+    }
+    SECTION("has working overloaded equality"){
+        Card base(Suit::Spades, Value::A);
+        Card same(Suit::Spades, Value::A);
+        Card different(Suit::Diamonds, Value::Q);
+        Card wrong_suit(Suit::Clubs, Value::A);
+        Card wrong_val(Suit::Spades, Value::Four);
 
+        REQUIRE(base == same);
+        REQUIRE_FALSE(base == different);
+        REQUIRE_FALSE(base == wrong_suit);
+        REQUIRE_FALSE(base == wrong_val);
+    }
+    SECTION("has working overloaded equality with dereferenced pointers"){
+        Card *same = new Card(Suit::Spades, Value::A);
+        Card *different = new Card(Suit::Diamonds, Value::Q);
+        Card *wrong_suit = new Card(Suit::Clubs, Value::A);
+        Card *wrong_val = new Card(Suit::Spades, Value::Four);
+
+        REQUIRE(*a == *same);
+        REQUIRE_FALSE(*a == *different);
+        REQUIRE_FALSE(*a == *wrong_suit);
+        REQUIRE_FALSE(*a == *wrong_val);
+    }
+}
+
+TEST_CASE("Stringify returns expected strings", "[Stringify]"){
+
+    SECTION("using SuitStringify"){
+        REQUIRE("Hearts" == SuitStringify(Suit::Hearts));
+        REQUIRE("Spades" == SuitStringify(Suit::Spades));
+        REQUIRE("Diamonds" == SuitStringify(Suit::Diamonds));
+        REQUIRE("Clubs" == SuitStringify(Suit::Clubs));
     }
 
+    SECTION("using ValueStringify"){
+        REQUIRE("Two" == ValueStringify(Value::Two));
+        REQUIRE("Three" == ValueStringify(Value::Three));
+        REQUIRE("Four" == ValueStringify(Value::Four));
+        REQUIRE("Five" == ValueStringify(Value::Five));
+        REQUIRE("Six" == ValueStringify(Value::Six));
+        REQUIRE("Seven" == ValueStringify(Value::Seven));
+        REQUIRE("Eight" == ValueStringify(Value::Eight));
+        REQUIRE("Nine" == ValueStringify(Value::Nine));
+        REQUIRE("Ten" == ValueStringify(Value::Ten));
+        REQUIRE("J" == ValueStringify(Value::J));
+        REQUIRE("Q" == ValueStringify(Value::Q));
+        REQUIRE("K" == ValueStringify(Value::K));
+        REQUIRE("A" == ValueStringify(Value::A));
+    }
+
+}
+
+TEST_CASE("Deck","[deck]"){
+    Deck deck(1);
+    Deck deck6(6);
+    SECTION("cstr creates vector of size 52 for one deck"){
+        Deck deck2(2);
+        REQUIRE(deck.get_size() == 52);
+        REQUIRE(deck2.get_size() == 104);
+        REQUIRE(deck6.get_size() == 312);
+    }
+    SECTION("draw function returns correct first card"){
+        Card two_of_spades(Suit::Spades, Value::Two);
+        REQUIRE(*(deck.Draw()) == two_of_spades);
+    }
+    SECTION("get_card returns correct cards"){
+        Card two_of_spades(Suit::Spades,Value::Two);
+        REQUIRE(*(deck.get_card(0)) == two_of_spades);
+        REQUIRE(*(deck6.get_card(0)) == two_of_spades);
+
+        Card ace_of_hearts(Suit::Hearts, Value::A);
+        REQUIRE(*(deck.get_card(51)) == ace_of_hearts);
+        REQUIRE(*(deck6.get_card(51)) == ace_of_hearts);
+
+        Card queen_of_diamonds(Suit::Diamonds, Value::Q);
+        REQUIRE(*(deck6.get_card(23)) == queen_of_diamonds);
+        REQUIRE(*(deck6.get_card(75)) == queen_of_diamonds);
+        REQUIRE(*(deck6.get_card(127)) == queen_of_diamonds);
+        REQUIRE(*(deck6.get_card(179)) == queen_of_diamonds);
+        REQUIRE(*(deck6.get_card(231)) == queen_of_diamonds);
+        REQUIRE(*(deck6.get_card(283)) == queen_of_diamonds);
+
+    }
 
 }
