@@ -53,8 +53,7 @@ std::string ValueStringify(Value val){
     }
 }
 
-Deck::Deck(int number){
-
+CardFactory::CardFactory() {
     std::vector<Suit> suits {Suit::Spades, Suit::Diamonds, Suit::Clubs, Suit::Hearts};
 
     std::vector<Value> values {Value::Two, Value::Three, Value::Four, Value::Five,
@@ -67,11 +66,13 @@ Deck::Deck(int number){
             cards_.push_back(Card(suits[i],values[j]));
         }
     }
+}
 
+Deck::Deck(int number){
     //create a deck of n * 52 references to the cards
     for (int deck = 0; deck < number; deck++){
         for (int i = 0; i < 52; i++){
-            deck_.push_back(get_from_cards_(i));
+            deck_.push_back(factory_.get_card(i));
         }
     }
 }

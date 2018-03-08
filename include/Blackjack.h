@@ -25,6 +25,16 @@ struct Card {
 
 bool operator==(Card lhs, Card rhs);
 
+struct CardFactory {
+
+    public:
+        CardFactory();
+        Card* get_card(int index) { return &cards_[index]; }
+
+    private:
+        std::vector<Card> cards_;
+};
+
 struct Deck {
 
     public:
@@ -33,9 +43,8 @@ struct Deck {
         int get_size()  { return deck_.size(); };
         Card* get_card(int index) { return deck_[index]; };
     private:
-        Card* get_from_cards_(int index) { return &cards_[index]; }
         std::vector<Card*> deck_; //for gameplay
-        std::vector<Card> cards_; //for reference from deck_
+        CardFactory factory_;
 };
 
 #endif
