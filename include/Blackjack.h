@@ -39,9 +39,11 @@ struct Deck {
 
     public:
         Deck(int number);
-        Card* Draw() { return deck_[0]; };
-        int get_size()  { return deck_.size(); };
+        int size()  { return deck_.size(); };
         Card* get_card(int index) { return deck_[index]; };
+
+        Card* Draw();
+        void Shuffle();
     private:
         std::vector<Card*> deck_; //for gameplay
         CardFactory factory_;

@@ -67,9 +67,9 @@ TEST_CASE("Deck","[deck]"){
     Deck deck6(6);
     SECTION("cstr creates vector of size 52 for one deck"){
         Deck deck2(2);
-        REQUIRE(deck.get_size() == 52);
-        REQUIRE(deck2.get_size() == 104);
-        REQUIRE(deck6.get_size() == 312);
+        REQUIRE(deck.size() == 52);
+        REQUIRE(deck2.size() == 104);
+        REQUIRE(deck6.size() == 312);
     }
     SECTION("draw function returns correct first card"){
         Card two_of_spades(Suit::Spades, Value::Two);
@@ -94,4 +94,21 @@ TEST_CASE("Deck","[deck]"){
 
     }
 
+}
+
+TEST_CASE("shuffle method", "[shuffle]") {
+    Deck deck(6);
+    Deck oldDeck = deck;
+    deck.Shuffle();
+    bool different = false;
+
+    for (int i = 0; i < deck.size(); i++){
+        if (deck.get_card(i) != oldDeck.get_card(i)) {
+            different = true;
+            break;
+        }
+    }
+
+    REQUIRE(deck.size() == oldDeck.size());
+    REQUIRE(different);
 }

@@ -2,6 +2,8 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <cstdlib>
+#include <ctime>
 
 bool operator==(Card lhs, Card rhs){
     if (lhs.get_val() == rhs.get_val() && lhs.get_suit() == rhs.get_suit()){
@@ -75,4 +77,25 @@ Deck::Deck(int number){
             deck_.push_back(factory_.get_card(i));
         }
     }
+}
+
+Card* Deck::Draw(){
+    Card *c = deck_[0];
+    deck_.erase(deck_.begin());
+    return c;
+}
+
+void Deck::Shuffle() {
+    std::vector<Card*> newDeck;
+    int deck_size = deck_.size();
+    srand((unsigned)time(0));
+    int random_index;
+
+    for (int i = 0; i < deck_size; i++){
+        random_index = rand() % deck_.size();
+        newDeck.push_back(deck_[ random_index ]);
+        deck_.erase(deck_.begin() + random_index);
+    }
+
+    deck_ = newDeck;
 }
