@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 
 enum class Value { Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, J, Q, K, A};
 enum class Suit { Spades, Diamonds, Clubs, Hearts};
@@ -66,7 +67,7 @@ struct Player : public Person {
     public:
         Player();
         int Bet(int amount);
-        void Turn();
+        void Turn() { std::cout << "placeholder" << std::endl; };
 
     private:
         int chips_;
@@ -78,7 +79,7 @@ struct Dealer : public Person {
 
     public:
         Dealer();
-        void Turn();
+        void Turn() { std::cout << "placeholder" << std::endl; };
     private:
 
 };
@@ -87,7 +88,7 @@ struct Dealer : public Person {
 class Table {
 
     public:
-        Table();
+        Table(int decks) : deck_(Deck(decks)), discard_(Deck(0)) {};
         void PlayRound();
 
     private:
