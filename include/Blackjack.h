@@ -6,6 +6,7 @@
 
 enum class Value { Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, J, Q, K, A};
 enum class Suit { Spades, Diamonds, Clubs, Hearts};
+enum class Action { Hit, Stand, Double, Split, Surrender};
 
 std::string SuitStringify(Suit suit);
 std::string ValueStringify(Value val);
@@ -49,4 +50,51 @@ struct Deck {
         CardFactory factory_;
 };
 
+struct Person {
+
+    public:
+        void AddToHand(Card *);
+        virtual void Turn();
+
+    protected:
+        std::vector<Card*> hand_;
+};
+
+//adds chips and betting functionality
+struct Player : public Person {
+
+    public:
+        Player();
+        int Bet(int amount);
+        void Turn();
+
+    private:
+        int chips_;
+
+};
+
+//turn only needs to include hitting and staying, with different strategy
+struct Dealer : public Person {
+
+    public:
+        Dealer();
+        void Turn();
+    private:
+
+};
+
+
+class Table {
+
+    public:
+        Table();
+        void PlayRound();
+
+    private:
+        Player player_;
+        Dealer dealer_;
+        Deck deck_;
+        Deck discard_;
+
+};
 #endif
