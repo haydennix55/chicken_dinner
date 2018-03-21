@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <tuple>
 
 enum class Value { Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, J, Q, K, A};
 enum class Suit { Spades, Diamonds, Clubs, Hearts};
@@ -43,6 +44,7 @@ struct Deck {
         Deck(int number);
         int size()  { return deck_.size(); };
         Card* get_card(int index) { return deck_[index]; };
+        void AddToDeck(Card *c) { deck_.push_back(c); };
 
         Card* Draw();
         void Shuffle();
@@ -54,18 +56,24 @@ struct Deck {
 struct Person {
 
     public:
-        void AddToHand(Card *);
-        virtual void Turn();
+        Person() {};
+        ~Person() {};
+        std::vector<Card*> get_hand_() { return hand_; };
+
+        void AddToHand(Card *c) { hand_.push_back(c); };
+        int HandVal();
+
 
     protected:
         std::vector<Card*> hand_;
+        int hand_count_;
 };
 
 //adds chips and betting functionality
 struct Player : public Person {
 
     public:
-        Player();
+        Player() : Person() {};
         int Bet(int amount);
         void Turn() { std::cout << "placeholder" << std::endl; };
 
@@ -78,17 +86,22 @@ struct Player : public Person {
 struct Dealer : public Person {
 
     public:
-        Dealer();
+        Dealer() : Person() {};
         void Turn() { std::cout << "placeholder" << std::endl; };
     private:
 
 };
 
-
-class Table {
+class Game {
 
     public:
-        Table(int decks) : deck_(Deck(decks)), discard_(Deck(0)) {};
+        Game(int decks) : deck_(Deck(decks)), discard_(Deck(0)) {};
+        Player get_player_() { return player_; };
+        Dealer get_dealer_() { return dealer_; };
+        Deck get_deck_() { return deck_; };
+        Deck get_discard_() { return discard_; };
+
+        void SetupRound();
         void PlayRound();
 
     private:
@@ -97,5 +110,11 @@ class Table {
         Deck deck_;
         Deck discard_;
 
+        void deal_(Person *p);
+        void burn_();
+
+
 };
+
+
 #endif
