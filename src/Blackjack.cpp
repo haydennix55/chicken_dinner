@@ -150,13 +150,13 @@ int Person::HandVal() {
             for (int i = temp; i < hand_values.size(); i++){
                 hand_values[i]++;
             }
-        } else {
-
-            for (int i = 0; i < temp; i++) {
-                hand_values[i] += card_val;
-            }
 
         }
+
+        for (int i = 0; i < temp; i++) {
+            hand_values[i] += card_val;
+        }
+
 
     }
 
