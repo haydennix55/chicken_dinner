@@ -138,16 +138,27 @@ TEST_CASE("HandVal in Person base class", "[handval]") {
 
     Card *two_of_hearts = new Card(Suit::Hearts, Value::Two);
     Card *three_of_hearts = new Card(Suit::Hearts, Value::Three);
+    Card *four_of_hearts = new Card(Suit::Hearts, Value::Four);
+    Card *five_of_hearts = new Card(Suit::Hearts, Value::Five);
+    Card *six_of_hearts = new Card(Suit::Hearts, Value::Six);
+    Card *seven_of_hearts = new Card(Suit::Hearts, Value::Seven);
+    Card *eight_of_hearts = new Card(Suit::Hearts, Value::Eight);
+    Card *nine_of_hearts = new Card(Suit::Hearts, Value::Nine);
 
-    p.AddToHand(two_of_hearts);
-    d.AddToHand(two_of_hearts);
+    Card *ace_of_spades = new Card(Suit::Spades, Value::A);
+    Card *queen_of_diamonds = new Card(Suit::Diamonds, Value::Q);
 
     SECTION("determines value of single card hand (base case)") {
+        p.AddToHand(two_of_hearts);
+        d.AddToHand(two_of_hearts);
+
         REQUIRE(p.HandVal() == 2);
         REQUIRE(d.HandVal() == 2);
     }
 
     SECTION("determines value of two simple cards less than") {
+        p.AddToHand(two_of_hearts);
+        d.AddToHand(two_of_hearts);
         p.AddToHand(three_of_hearts);
         d.AddToHand(three_of_hearts);
 
@@ -155,17 +166,73 @@ TEST_CASE("HandVal in Person base class", "[handval]") {
         REQUIRE(d.HandVal() == 5);
 
         Person p2;
-        Card *queen_of_diamonds = new Card(Suit::Diamonds, Value::Q);
         p2.AddToHand(queen_of_diamonds);
         p2.AddToHand(three_of_hearts);
 
         REQUIRE(p2.HandVal() ==  13);
 
+    }
+
+    SECTION("returns best value for two card hand with one ace < 21"){
+        p.AddToHand(three_of_hearts);
+        p.AddToHand(ace_of_spades);
+
+        REQUIRE(p.HandVal() == 14);
+    }
+
+    SECTION("returns best value for two card hand with one ace = 21"){
+        p.AddToHand(queen_of_diamonds);
+        p.AddToHand(ace_of_spades);
+
+        REQUIRE(p.HandVal() == 21);
+    }
+
+    SECTION("returns best value for two card hand with two aces"){
+        p.AddToHand(ace_of_spades);
+        p.AddToHand(ace_of_spades);
+
+        REQUIRE(p.HandVal() == 12);
+    }
+
+    SECTION("returns best value for n cards or 0 if not <= 21"){
+        p.AddToHand(two_of_hearts);
+        p.AddToHand(four_of_hearts);
+
+        REQUIRE(p.HandVal() == 6);
+
+        p.AddToHand(nine_of_hearts);
+
+        REQUIRE(p.HandVal() == 15);
+
+        p.AddToHand(five_of_hearts);
+
+        REQUIRE(p.HandVal() == 20);
+
+        p.AddToHand(two_of_hearts);
+
+        REQUIRE(p.HandVal() == 0);
+    }
+
+    SECTION("returns best value for n cards with aces or 0 if not any <= 21"){
+        p.AddToHand(ace_of_spades);
+        p.AddToHand(ace_of_spades);
+
+        REQUIRE(p.HandVal() == 12);
+
+        p.AddToHand(queen_of_diamonds);
+
+        REQUIRE(p.HandVal() == 12);
+
+        p.AddToHand(nine_of_hearts);
+
+        REQUIRE(p.HandVal() == 21);
+
+        p.AddToHand(ace_of_spades);
+
+        REQUIRE(p.HandVal() == 0);
 
     }
 
-    //TODO: Returns best value for two card hand with at lease one ace
-    //TODO: Returns value of n card hand with simple cards
     //TODO: Returns value of n card hand with aces
     //TODO: Returns 0 if no hand values are LEQ 21
 
