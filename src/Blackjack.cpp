@@ -71,6 +71,11 @@ CardFactory::CardFactory() {
     }
 }
 
+Card* CardFactory::get_card(int index) {
+  Card *c = &cards_[index];
+  return c;
+}
+
 Deck::Deck(int number) {
     //create a deck of n * 52 references to the cards
     for (int deck = 0; deck < number; deck++){
@@ -172,6 +177,18 @@ int Person::HandVal() {
 
 }
 
+int Player::MakeChoice() {
+
+    //this will eventually have strategy methods, but for now, always stay
+    return 0;
+
+}
+
+Game::Game(int decks) : deck_(Deck(decks)), discard_(Deck(0)) {
+    deck_.Shuffle();
+    this->burn_();
+}
+
 void Game::deal_(Person *p) {
     p->AddToHand(deck_.Draw());
 }
@@ -180,26 +197,69 @@ void Game::burn_() {
     discard_.AddToDeck(deck_.Draw());
 }
 
+void Game::DisplayTablePlayer() {
+    //this is a placeholder for now for the UI
+    std::cout << std::endl << "Players hand: " << std::endl << std::endl;
+    for (int i = 0; i < player_.get_hand_().size(); i++) {
+        std::cout << ValueStringify(player_.get_hand_()[i]->get_val()) << " of " << SuitStringify(player_.get_hand_()[i]->get_suit()) << std::endl;
+    }
+    std::cout << std::endl << "Dealers hand: " << std::endl << std::endl;
+    for (int i = 0; i < dealer_.get_hand_().size(); i++) {
+        std::cout << ValueStringify(dealer_.get_hand_()[i]->get_val()) << " of " << SuitStringify(player_.get_hand_()[i]->get_suit()) << std::endl;
+    }
+}
+
 void Game::SetupRound() {
 
     //TODO: Collect bet
 
-    this->deal_(&player_);
-    this->deal_(&dealer_);
+    deck_.Shuffle();
 
-    this->deal_(&player_);
-    this->deal_(&dealer_);
+    deal_(&player_);
+    deal_(&dealer_);
+
+    deal_(&player_);
+    deal_(&dealer_);
+
 }
 
 void Game::PlayRound() {
-    this->SetupRound();
+    SetupRound();
+    int dealer_score = dealer_.HandVal();
+    int player_score = player_.HandVal();
 
-    //TODO: Check dealer insurance and Blackjack
-    //TODO: Check player for Blackjack
+    //TODO: Display state of table
 
-    //TODO: Players turn until bust or Stand
-    //TODO: If player not busted, dealer turn until busted or > 17
+    if (dealer_.get_hand_()[1]->get_val() == Value::A) {
+        //TODO: insurance offer
+    }
+
+    if (player_score == 21 || dealer_score == 21) {
+        //TODO: handle insurance
+        //TODO: go to assess results and payouts
+    }
+
+    //TODO: handle insurance
+
+    bool stay = false;
+    while (player_score < 21 && !stay) {
+
+        int choice = player_.MakeChoice(); //strategy
+        if (choice == 0) {
+            stay = true;
+        } else {
+            //doTurn(choice);
+        }
+    }
+
+    if (player_score <= 21) {
+        while (dealer_score < 17 && dealer_score != 0) {
+              deal_(&dealer_);
+              dealer_score = dealer_.HandVal();
+        }
+    }
 
     //TODO: Assess results and payouts
     //TODO: Clear table
+
 }

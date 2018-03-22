@@ -32,7 +32,7 @@ struct CardFactory {
 
     public:
         CardFactory();
-        Card* get_card(int index) { return &cards_[index]; }
+        Card* get_card(int index);
 
     private:
         std::vector<Card> cards_;
@@ -75,7 +75,7 @@ struct Player : public Person {
     public:
         Player() : Person() {};
         int Bet(int amount);
-        void Turn() { std::cout << "placeholder" << std::endl; };
+        int MakeChoice();
 
     private:
         int chips_;
@@ -87,7 +87,6 @@ struct Dealer : public Person {
 
     public:
         Dealer() : Person() {};
-        void Turn() { std::cout << "placeholder" << std::endl; };
     private:
 
 };
@@ -95,21 +94,24 @@ struct Dealer : public Person {
 class Game {
 
     public:
-        Game(int decks) : deck_(Deck(decks)), discard_(Deck(0)) {};
+        Game(int decks);
+        ~Game() {std::cout << "game deleted" << std::endl;};
         Player get_player_() { return player_; };
         Dealer get_dealer_() { return dealer_; };
         Deck get_deck_() { return deck_; };
         Deck get_discard_() { return discard_; };
 
+        void DisplayTablePlayer();
         void SetupRound();
         void PlayRound();
+        void doTurn();
+        void doDealerTurn();
 
     private:
         Player player_;
         Dealer dealer_;
         Deck deck_;
         Deck discard_;
-
         void deal_(Person *p);
         void burn_();
 
