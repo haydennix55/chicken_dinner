@@ -243,9 +243,6 @@ TEST_CASE("HandVal in Person base class", "[handval]") {
 
 TEST_CASE("Game", "[game]") {
 
-    SECTION("combination of deck, person, and game functions") {
-
-    }
     Game *g2 = new Game(2);
     Game *g6 = new Game(6);
 
@@ -263,5 +260,17 @@ TEST_CASE("Game", "[game]") {
     //TODO: CHECK ADD TO HAND BECAUSE ITS NOT FUCKING WORKING RIGHT APPARENTLY
     g2->PlayRound();
     g6->PlayRound();
+
+    bool validDealerHand = ( (g2->get_dealer_().HandVal() >= 17 &&
+                            g2->get_dealer_().HandVal() <= 21)  ||
+                            (g2->get_dealer_().HandVal() == 0) );
+
+    REQUIRE(validDealerHand);
+
+    validDealerHand = ( (g6->get_dealer_().HandVal() >= 17 &&
+                            g6->get_dealer_().HandVal() <= 21)  ||
+                            (g6->get_dealer_().HandVal() == 0) );
+
+    REQUIRE(validDealerHand);
 
 }
