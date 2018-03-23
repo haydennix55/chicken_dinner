@@ -257,10 +257,5 @@ TEST_CASE("Game", "[game]") {
     REQUIRE(g2->get_dealer_().get_hand_().size() == 0);
     REQUIRE(g6->get_dealer_().get_hand_().size() == 0);
 
-    g2->PlayRound();
-    g6->PlayRound();
-
-    REQUIRE(g2->get_dealer_().HandVal() == 0);
-    REQUIRE(g6->get_dealer_().HandVal() == 0);
 
 }
