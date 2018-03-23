@@ -45,6 +45,7 @@ struct Deck {
         int size()  { return deck_.size(); };
         Card* get_card(int index) { return deck_[index]; };
         void AddToDeck(Card *c) { deck_.push_back(c); };
+        void ClearDeck();
 
         Card* Draw();
         void Shuffle();
@@ -62,6 +63,7 @@ struct Person {
 
         void AddToHand(Card *c) { hand_.push_back(c); };
         int HandVal();
+        void ClearHand();
 
 
     protected:
@@ -74,11 +76,16 @@ struct Player : public Person {
 
     public:
         Player() : Person() {};
-        int Bet(int amount);
+        int get_bet_() { return bet_; }
+        int get_chips_() { return chips_; }
+        void Bet(int amount) { bet_ = amount;
+                              chips_ -= amount; };
+        void Payout(int amount) { chips_ += amount; };
         int MakeChoice();
 
     private:
-        int chips_;
+        int chips_ = 1000;
+        int bet_ = 0;
 
 };
 
@@ -101,11 +108,15 @@ class Game {
         Deck get_deck_() { return deck_; };
         Deck get_discard_() { return discard_; };
 
-        void DisplayTablePlayer();
+        void DisplayPlayer();
+        void DisplayDealer();
+        void DisplayDealerShown();
         void SetupRound();
         void PlayRound();
-        void doTurn();
-        void doDealerTurn();
+        bool DoTurn(int choice);
+        void AssessResults();
+        void Clear();
+        void ResetDeck();
 
     private:
         Player player_;

@@ -106,6 +106,10 @@ void Deck::Shuffle() {
     deck_ = newDeck;
 }
 
+void Deck::ClearDeck() {
+  deck_.clear();
+}
+
 int Person::HandVal() {
     std::vector<int> hand_values;
     hand_values.push_back(0);
@@ -177,10 +181,21 @@ int Person::HandVal() {
 
 }
 
+void Person::ClearHand() {
+  hand_.clear();
+}
+
 int Player::MakeChoice() {
 
     //this will eventually have strategy methods, but for now, always stay
-    return 0;
+    std::string choice;
+    while (true){
+      std::cout << "Make your choice: 0 to stay, 1 to hit, 2 to double" << std::endl;
+      std::getline (std::cin,choice);
+      if (choice == "0" || choice == "1" || choice == "2") {
+        return stoi(choice);
+      }
+    }
 
 }
 
@@ -197,21 +212,122 @@ void Game::burn_() {
     discard_.AddToDeck(deck_.Draw());
 }
 
-void Game::DisplayTablePlayer() {
+bool Game::DoTurn(int choice) {
+
+  if (choice == 0) {
+    std::cout << "You stay\n" ;
+    return true;
+  }else if (choice == 1) {
+    std::cout << "You hit\n" ;
+    deal_(&player_);
+    DisplayPlayer();
+    return false;
+  } else if (choice == 2) {
+    std::cout << "You double\n" ;
+    player_.Payout(player_.get_bet_());
+    player_.Bet(player_.get_bet_() * 2);
+    deal_(&player_);
+    DisplayPlayer();
+    return true;
+  } else {
+    //split
+    return false;
+  }
+}
+
+void Game::AssessResults() {
+  int dealer_score = dealer_.HandVal();
+  int player_score = player_.HandVal();
+  int bet = player_.get_bet_();
+
+  if (player_score == 21 && dealer_score != 21) {
+    if (player_.get_hand_().size() == 2) {
+      player_.Payout(bet * 2.5);
+      std::cout << "nice blackjack" << std::endl;
+    }
+  } else if (player_score == 0) {
+    std::cout << "You busted" << std::endl;
+  }
+  else {
+    if (player_score > dealer_score) {
+      std::cout << "You win" << std::endl;
+      player_.Payout(bet * 2);
+    } else if (player_score == dealer_score) {
+      std::cout << "push" << std::endl;
+      player_.Payout(bet);
+    } else {
+    std::cout << "you lose" << std::endl;
+  }
+    //else its a loss, which currently has no payout as the dealer doesn't
+    //have a total amount
+  }
+}
+
+void Game::Clear() {
+  std::vector<Card*> player_hand = player_.get_hand_();
+  std::vector<Card*> dealer_hand = dealer_.get_hand_();
+
+  for (int i = 0; i < player_hand.size(); i++) {
+    discard_.AddToDeck(player_hand[i]);
+  }
+
+  for (int i = 0; i < dealer_hand.size(); i++) {
+    discard_.AddToDeck(dealer_hand[i]);
+  }
+  player_.ClearHand();
+  dealer_.ClearHand();
+  player_.Bet(0);
+
+  std::cout << "Game reset" << std::endl;
+  std::cout << "Player hand size: " << player_.get_hand_().size() << std::endl;
+  std::cout << "Dealer hand size: " << dealer_.get_hand_().size() << std::endl;
+  std::cout << "Deck size: " << deck_.size() << std::endl;
+  std::cout << "Discard size: " << discard_.size() << std::endl;
+  std::cout << "Player chips: " << player_.get_chips_() << std::endl;
+  std::cout << std::endl << "----------------------------" << std::endl;
+
+
+}
+
+void Game::ResetDeck() {
+    for (int i = 0; i < discard_.size(); i++) {
+      deck_.AddToDeck(discard_.get_card(i));
+    }
+    discard_.ClearDeck();
+}
+
+void Game::DisplayPlayer() {
     //this is a placeholder for now for the UI
     std::cout << std::endl << "Players hand: " << std::endl << std::endl;
     for (int i = 0; i < player_.get_hand_().size(); i++) {
         std::cout << ValueStringify(player_.get_hand_()[i]->get_val()) << " of " << SuitStringify(player_.get_hand_()[i]->get_suit()) << std::endl;
     }
-    std::cout << std::endl << "Dealers hand: " << std::endl << std::endl;
-    for (int i = 0; i < dealer_.get_hand_().size(); i++) {
-        std::cout << ValueStringify(dealer_.get_hand_()[i]->get_val()) << " of " << SuitStringify(player_.get_hand_()[i]->get_suit()) << std::endl;
-    }
+    std::cout << std::endl;
+}
+
+void Game::DisplayDealer() {
+  std::cout << std::endl << "Dealers hand: " << std::endl << std::endl;
+  for (int i = 0; i < dealer_.get_hand_().size(); i++) {
+      std::cout << ValueStringify(dealer_.get_hand_()[i]->get_val()) << " of " << SuitStringify(player_.get_hand_()[i]->get_suit()) << std::endl;
+  }
+  std::cout << std::endl;
+}
+
+void Game::DisplayDealerShown() {
+  std::cout << std::endl << "Dealers showing card: " << std::endl << std::endl;
+  std::cout << ValueStringify(dealer_.get_hand_()[1]->get_val()) << " of " << SuitStringify(player_.get_hand_()[1]->get_suit()) << std::endl << std::endl;
 }
 
 void Game::SetupRound() {
 
-    //TODO: Collect bet
+    if (deck_.size() < (discard_.size() / 4)) {
+      ResetDeck();
+    }
+    //when a counting cards comes in, this can change
+    std::cout << std::endl << "----------------------------" << std::endl;
+    player_.Bet(10);
+
+    std::cout << "Player bets: " << player_.get_bet_() << std::endl;
 
     deck_.Shuffle();
 
@@ -220,6 +336,9 @@ void Game::SetupRound() {
 
     deal_(&player_);
     deal_(&dealer_);
+
+    DisplayPlayer();
+    DisplayDealerShown();
 
 }
 
@@ -236,30 +355,38 @@ void Game::PlayRound() {
 
     if (player_score == 21 || dealer_score == 21) {
         //TODO: handle insurance
-        //TODO: go to assess results and payouts
+        AssessResults();
+        Clear();
+        return;
     }
 
     //TODO: handle insurance
 
     bool stay = false;
-    while (player_score < 21 && !stay) {
+    while (player_score != 0 && !stay) {
 
         int choice = player_.MakeChoice(); //strategy
-        if (choice == 0) {
-            stay = true;
-        } else {
-            //doTurn(choice);
-        }
+        stay = DoTurn(choice);
+        player_score = player_.HandVal();
+        std::cout << player_score << std::endl;
+
     }
 
-    if (player_score <= 21) {
-        while (dealer_score < 17 && dealer_score != 0) {
-              deal_(&dealer_);
-              dealer_score = dealer_.HandVal();
-        }
+    DisplayDealer();
+
+    if (player_score == 0) {
+      AssessResults();
+      Clear();
+      return;
+    } else {
+      while (dealer_score < 17 && dealer_score != 0) {
+            deal_(&dealer_);
+            dealer_score = dealer_.HandVal();
+            std::cout << "Dealer hits and now has: " << dealer_score << std::endl;
+      }
     }
 
-    //TODO: Assess results and payouts
-    //TODO: Clear table
+    AssessResults();
+    Clear();
 
 }

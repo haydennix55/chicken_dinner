@@ -257,20 +257,10 @@ TEST_CASE("Game", "[game]") {
     REQUIRE(g2->get_dealer_().get_hand_().size() == 0);
     REQUIRE(g6->get_dealer_().get_hand_().size() == 0);
 
-    //TODO: CHECK ADD TO HAND BECAUSE ITS NOT FUCKING WORKING RIGHT APPARENTLY
     g2->PlayRound();
     g6->PlayRound();
 
-    bool validDealerHand = ( (g2->get_dealer_().HandVal() >= 17 &&
-                            g2->get_dealer_().HandVal() <= 21)  ||
-                            (g2->get_dealer_().HandVal() == 0) );
-
-    REQUIRE(validDealerHand);
-
-    validDealerHand = ( (g6->get_dealer_().HandVal() >= 17 &&
-                            g6->get_dealer_().HandVal() <= 21)  ||
-                            (g6->get_dealer_().HandVal() == 0) );
-
-    REQUIRE(validDealerHand);
+    REQUIRE(g2->get_dealer_().HandVal() == 0);
+    REQUIRE(g6->get_dealer_().HandVal() == 0);
 
 }
