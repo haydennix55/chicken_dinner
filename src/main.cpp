@@ -6,6 +6,9 @@
 
 int main() {
 
-  std::cout << "Hello, World!" << std::endl;
+  Game *g = new Game(6);
+  while (true) {
+    g->PlayRound();
+  }
 
 }

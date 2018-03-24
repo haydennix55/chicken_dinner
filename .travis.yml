@@ -7,7 +7,6 @@ os:
 script:
     - make
     - make test
-    - bin/app
     - bin/test
 
 notifications:

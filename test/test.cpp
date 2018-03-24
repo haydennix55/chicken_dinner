@@ -73,7 +73,14 @@ TEST_CASE("Deck","[deck]"){
     }
     SECTION("draw function returns correct first card"){
         Card two_of_spades(Suit::Spades, Value::Two);
-        REQUIRE(*(deck.Draw()) == two_of_spades);
+        Card three_of_spades(Suit::Spades, Value::Three);
+        Card four_of_spades(Suit::Spades, Value::Four);
+        Card five_of_spades(Suit::Spades, Value::Five);
+        //Card *c = deck.Draw();
+        REQUIRE(*deck.Draw() == two_of_spades);
+        REQUIRE(*deck.Draw() == three_of_spades);
+        REQUIRE(*deck.Draw() == four_of_spades);
+        REQUIRE(*deck.Draw() == five_of_spades);
     }
     SECTION("get_card returns correct cards"){
         Card two_of_spades(Suit::Spades,Value::Two);
@@ -111,4 +118,152 @@ TEST_CASE("shuffle method", "[shuffle]") {
 
     REQUIRE(deck.size() == oldDeck.size());
     REQUIRE(different);
+}
+
+TEST_CASE("Person's derived classes", "[person]") {
+    Person p;
+    Dealer d;
+
+    REQUIRE(p.get_hand_().size() == 0);
+    REQUIRE(d.get_hand_().size() == 0);
+
+    Card *c = new Card(Suit::Diamonds, Value::Q);
+    p.AddToHand(c);
+    d.AddToHand(c);
+
+    REQUIRE(p.get_hand_().size() == 1);
+    REQUIRE(d.get_hand_().size() == 1);
+
+    /* Must add more test cases when turns are implemented */
+
+}
+
+TEST_CASE("HandVal in Person base class", "[handval]") {
+    Person p;
+    Dealer d;
+
+    Card *two_of_hearts = new Card(Suit::Hearts, Value::Two);
+    Card *three_of_hearts = new Card(Suit::Hearts, Value::Three);
+    Card *four_of_hearts = new Card(Suit::Hearts, Value::Four);
+    Card *five_of_hearts = new Card(Suit::Hearts, Value::Five);
+    Card *six_of_hearts = new Card(Suit::Hearts, Value::Six);
+    Card *seven_of_hearts = new Card(Suit::Hearts, Value::Seven);
+    Card *eight_of_hearts = new Card(Suit::Hearts, Value::Eight);
+    Card *nine_of_hearts = new Card(Suit::Hearts, Value::Nine);
+
+    Card *ace_of_spades = new Card(Suit::Spades, Value::A);
+    Card *queen_of_diamonds = new Card(Suit::Diamonds, Value::Q);
+
+    SECTION("determines value of single card hand (base case)") {
+        p.AddToHand(two_of_hearts);
+        d.AddToHand(two_of_hearts);
+
+        REQUIRE(p.HandVal() == 2);
+        REQUIRE(d.HandVal() == 2);
+    }
+
+    SECTION("determines value of two simple cards less than") {
+        p.AddToHand(two_of_hearts);
+        d.AddToHand(two_of_hearts);
+        p.AddToHand(three_of_hearts);
+        d.AddToHand(three_of_hearts);
+
+        REQUIRE(p.HandVal() == 5);
+        REQUIRE(d.HandVal() == 5);
+
+        Person p2;
+        p2.AddToHand(queen_of_diamonds);
+        p2.AddToHand(three_of_hearts);
+
+        REQUIRE(p2.HandVal() ==  13);
+
+    }
+
+    SECTION("returns best value for two card hand with one ace < 21"){
+        p.AddToHand(three_of_hearts);
+        p.AddToHand(ace_of_spades);
+
+        REQUIRE(p.HandVal() == 14);
+    }
+
+    SECTION("returns best value for two card hand with one ace = 21"){
+        p.AddToHand(queen_of_diamonds);
+        p.AddToHand(ace_of_spades);
+
+        REQUIRE(p.HandVal() == 21);
+    }
+
+    SECTION("returns best value for two card hand with two aces"){
+        p.AddToHand(ace_of_spades);
+        p.AddToHand(ace_of_spades);
+
+        REQUIRE(p.HandVal() == 12);
+    }
+
+    SECTION("returns best value for n cards or 0 if not <= 21"){
+        p.AddToHand(two_of_hearts);
+        p.AddToHand(four_of_hearts);
+
+        REQUIRE(p.HandVal() == 6);
+
+        p.AddToHand(nine_of_hearts);
+
+        REQUIRE(p.HandVal() == 15);
+
+        p.AddToHand(five_of_hearts);
+
+        REQUIRE(p.HandVal() == 20);
+
+        p.AddToHand(two_of_hearts);
+
+        REQUIRE(p.HandVal() == 0);
+    }
+
+    SECTION("returns best value for n cards with aces or 0 if not any <= 21"){
+        p.AddToHand(ace_of_spades);
+        p.AddToHand(ace_of_spades);
+
+        REQUIRE(p.HandVal() == 12);
+
+        p.AddToHand(queen_of_diamonds);
+
+        REQUIRE(p.HandVal() == 12);
+
+        p.AddToHand(nine_of_hearts);
+
+        REQUIRE(p.HandVal() == 21);
+
+        p.AddToHand(ace_of_spades);
+
+        REQUIRE(p.HandVal() == 0);
+
+    }
+
+}
+
+TEST_CASE("Game", "[game]") {
+
+    Game *g2 = new Game(2);
+    Game *g6 = new Game(6);
+
+    //based on number of decks - burn card
+    REQUIRE(g2->get_deck_().size() == 103);
+    REQUIRE(g6->get_deck_().size() == 311);
+
+    //checks burn cards
+    REQUIRE(g2->get_discard_().size() == 1);
+    REQUIRE(g6->get_discard_().size() == 1);
+
+    //all hands should be empty at start
+    REQUIRE(g2->get_player_().get_hand_().size() == 0);
+    REQUIRE(g6->get_player_().get_hand_().size() == 0);
+    REQUIRE(g2->get_dealer_().get_hand_().size() == 0);
+    REQUIRE(g6->get_dealer_().get_hand_().size() == 0);
+
+    /**
+    NOTE: All tests playing game were deleted for the time being, as the game currently
+    only has one public member function, which requires user input.
+    */
+
+
 }
