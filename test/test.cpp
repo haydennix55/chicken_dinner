@@ -246,16 +246,24 @@ TEST_CASE("Game", "[game]") {
     Game *g2 = new Game(2);
     Game *g6 = new Game(6);
 
-    // REQUIRE(g2.get_deck_().size() == 103);
-    // REQUIRE(g6.get_deck_().size() == 311);
+    //based on number of decks - burn card
+    REQUIRE(g2->get_deck_().size() == 103);
+    REQUIRE(g6->get_deck_().size() == 311);
 
+    //checks burn cards
     REQUIRE(g2->get_discard_().size() == 1);
     REQUIRE(g6->get_discard_().size() == 1);
 
+    //all hands should be empty at start
     REQUIRE(g2->get_player_().get_hand_().size() == 0);
     REQUIRE(g6->get_player_().get_hand_().size() == 0);
     REQUIRE(g2->get_dealer_().get_hand_().size() == 0);
     REQUIRE(g6->get_dealer_().get_hand_().size() == 0);
+
+    /**
+    NOTE: All tests playing game were deleted for the time being, as the game currently
+    only has one public member function, which requires user input.
+    */
 
 
 }

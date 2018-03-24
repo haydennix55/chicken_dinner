@@ -284,7 +284,8 @@ void Game::AssessResults() {
             player_.Payout(bet * 2.5);
             std::cout << "WINNER WINNER CHICKEN DINNER!" << std::endl;
         }
-    } else if (player_score == 0) {
+    }
+    if (player_score == 0) {
         std::cout << "You busted..." << std::endl;
     } else {
         if (player_score > dealer_score) { //win

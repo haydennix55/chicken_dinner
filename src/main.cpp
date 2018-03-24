@@ -6,7 +6,7 @@
 
 int main() {
 
-  Game *g = new Game(1);
+  Game *g = new Game(6);
   while (true) {
     g->PlayRound();
   }
