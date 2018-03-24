@@ -17,7 +17,7 @@ The code is currently tested on Linux and Mac OS X. On these operating systems, 
 
 ### Downloading and Running Application
 
-This section is currently not applicable. This will be filled when there is a packaged application.
+This section is currently not applicable. This will be filled when there is a packaged application. However, you can play the game in the terminal. See 'Development'.
 
 ### Development
 
@@ -36,6 +36,10 @@ Start by cloning the repository to your local machine.
 * __Run Catch Test Suite__
 
    * See above about command `make test`
+   
+* __Running the App__
+     
+   * There is currently a terminal based game implemented. To play, see above about command `make`
 
 * __Build and Run GUI__
 
