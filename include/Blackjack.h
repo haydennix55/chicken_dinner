@@ -9,10 +9,13 @@
 enum class Value { Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, J, Q, K, A};
 enum class Suit { Spades, Diamonds, Clubs, Hearts};
 enum class Action { Hit, Stand, Double, Split, Surrender};
+//TODO: Replace current choice logic with enum to increase readability
 
+//Convert enums to strings of their names
 std::string SuitStringify(Suit suit);
 std::string ValueStringify(Value val);
 
+//Card with Suit and Value fields
 struct Card {
 
     public:
@@ -26,8 +29,10 @@ struct Card {
 
 };
 
+//Cards are equal if they have the same Suit and Value
 bool operator==(Card lhs, Card rhs);
 
+//Contains a vector of the 52 cards to be referenced to make decks
 struct CardFactory {
 
     public:
@@ -38,46 +43,53 @@ struct CardFactory {
         std::vector<Card> cards_;
 };
 
+/** Deck
+This contains a CardFactory, a vector of references to the cards in the
+factor, and methods to manipulate the deck.
+*/
 struct Deck {
 
     public:
         Deck(int number);
         int size()  { return deck_.size(); };
         Card* get_card(int index) { return deck_[index]; };
-        void AddToDeck(Card *c) { deck_.push_back(c); };
-        void ClearDeck();
 
+        void AddToDeck(Card *c) { deck_.push_back(c); };
+        void ClearDeck() { deck_.clear(); };
         Card* Draw();
         void Shuffle();
+
     private:
         std::vector<Card*> deck_; //for gameplay
         CardFactory factory_;
 };
 
+/** Person
+Base class for both dealer and player, with hand, a vector of Card*, and
+related methods
+*/
 struct Person {
 
     public:
         Person() {};
-        ~Person() {};
         std::vector<Card*> get_hand_() { return hand_; };
 
         void AddToHand(Card *c) { hand_.push_back(c); };
+        void ClearHand() { hand_.clear(); };
         int HandVal();
-        void ClearHand();
-
 
     protected:
         std::vector<Card*> hand_;
-        int hand_count_;
 };
 
-//adds chips and betting functionality
+//Derived class from Person that adds betting, making game decisions, and chips
 struct Player : public Person {
 
     public:
         Player() : Person() {};
         int get_bet_() { return bet_; }
         int get_chips_() { return chips_; }
+
         void Bet(int amount) { bet_ = amount;
                               chips_ -= amount; };
         void Payout(int amount) { chips_ += amount; };
@@ -89,15 +101,17 @@ struct Player : public Person {
 
 };
 
-//turn only needs to include hitting and staying, with different strategy
+//Derived class from Person, which does not have any player functionality
 struct Dealer : public Person {
-
     public:
         Dealer() : Person() {};
     private:
-
 };
 
+/** Game
+This creates the entire table enviornment and allows rounds to be played. Like
+a blackjack table, it has a dealer, player, deck, discard, and methods to play rounds
+*/
 class Game {
 
     public:
@@ -108,15 +122,7 @@ class Game {
         Deck get_deck_() { return deck_; };
         Deck get_discard_() { return discard_; };
 
-        void DisplayPlayer();
-        void DisplayDealer();
-        void DisplayDealerShown();
-        void SetupRound();
         void PlayRound();
-        bool DoTurn(int choice);
-        void AssessResults();
-        void Clear();
-        void ResetDeck();
 
     private:
         Player player_;
@@ -125,6 +131,16 @@ class Game {
         Deck discard_;
         void deal_(Person *p);
         void burn_();
+        void DisplayPlayer();
+        void DisplayDealerShown();
+        void DisplayDealer();
+        void ResetDeck();
+        void SetupRound();
+
+        bool DoTurn(int choice);
+        void AssessResults();
+        void Clear();
+
 
 
 };

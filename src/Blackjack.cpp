@@ -6,6 +6,7 @@
 #include <ctime>
 #include <tuple>
 
+//Cards are equal if they have the same Suit and Value
 bool operator==(Card lhs, Card rhs) {
     if (lhs.get_val() == rhs.get_val() && lhs.get_suit() == rhs.get_suit()){
         return true;
@@ -13,6 +14,7 @@ bool operator==(Card lhs, Card rhs) {
     return false;
 }
 
+//Convert enums to strings of their names
 std::string SuitStringify(Suit suit) {
     if (suit == Suit::Spades){
         return "Spades";
@@ -24,7 +26,6 @@ std::string SuitStringify(Suit suit) {
         return "Hearts";
     }
 }
-
 std::string ValueStringify(Value val) {
     switch (val) {
         case Value::Two : return "Two";
@@ -56,6 +57,7 @@ std::string ValueStringify(Value val) {
     }
 }
 
+//Build a vector of instances of all 52 cards
 CardFactory::CardFactory() {
     std::vector<Suit> suits {Suit::Spades, Suit::Diamonds, Suit::Clubs, Suit::Hearts};
 
@@ -71,11 +73,16 @@ CardFactory::CardFactory() {
     }
 }
 
+//Return a reference to a card in the CardFactory (flyweight)
 Card* CardFactory::get_card(int index) {
   Card *c = &cards_[index];
   return c;
 }
 
+/**
+Populates deck vector with references to Cards in the CardFactory
+@param number -  the number of decks the game will use
+*/
 Deck::Deck(int number) {
     //create a deck of n * 52 references to the cards
     for (int deck = 0; deck < number; deck++){
@@ -85,6 +92,7 @@ Deck::Deck(int number) {
     }
 }
 
+//Return top card in deck and erase from deck
 Card* Deck::Draw() {
     Card *c = deck_[0];
     deck_.erase(deck_.begin());
@@ -94,30 +102,33 @@ Card* Deck::Draw() {
 void Deck::Shuffle() {
     std::vector<Card*> newDeck;
     int deck_size = deck_.size();
-    srand((unsigned)time(0));
+    srand((unsigned)time(0)); //used so that random number changes
     int random_index;
 
     for (int i = 0; i < deck_size; i++){
-        random_index = rand() % deck_.size();
-        newDeck.push_back(deck_[ random_index ]);
-        deck_.erase(deck_.begin() + random_index);
+        random_index = rand() % deck_.size(); //random number between 0 and current deck size
+        newDeck.push_back(deck_[ random_index ]); //add random choice to new deck
+        deck_.erase(deck_.begin() + random_index); //erase random choice from old deck
     }
 
     deck_ = newDeck;
 }
 
-void Deck::ClearDeck() {
-  deck_.clear();
-}
-
+/**
+Determine the best value for a given hand of cards. The best value would be
+the highest value that is less than 21.
+@return - the best score or 0 if no possible score is less than 21
+*/
 int Person::HandVal() {
-    std::vector<int> hand_values;
+    std::vector<int> hand_values; //potential values
     hand_values.push_back(0);
     int card_val;
 
+    //for every card in hand, update potential value
     for (int i = 0; i < hand_.size(); i++) {
 
         card_val = 0;
+        //determine value to increment hand values with
         switch (hand_[i]->get_val()) {
 
             case Value::Two : card_val = 2;
@@ -151,17 +162,21 @@ int Person::HandVal() {
 
         int temp = hand_values.size();
 
+        //if ace, duplicate the elements of the vector as they need to be
+        //considered with both +11 and +1
         if (card_val == 11){
 
             for (int i = 0; i < temp; i++){
                 hand_values.push_back(hand_values[i]);
             }
+            //increment the first half of values with 1, the rest will increment by 11 later
             for (int i = temp; i < hand_values.size(); i++){
                 hand_values[i]++;
             }
 
         }
 
+        //increment all possible hand values by card value
         for (int i = 0; i < temp; i++) {
             hand_values[i] += card_val;
         }
@@ -170,7 +185,7 @@ int Person::HandVal() {
     }
 
     int max = 0;
-
+    //find highest score thats under 21, or 0 if none
     for (int i = 0; i < hand_values.size(); i++){
         if (hand_values[i] > max && hand_values[i] <= 21){
             max = hand_values[i];
@@ -181,15 +196,16 @@ int Person::HandVal() {
 
 }
 
-void Person::ClearHand() {
-  hand_.clear();
-}
-
+/**
+Given the players hand and the showing dealer card, determine what action to
+takes. This is currently just a simple cin, but eventually this will be determined
+by basic strategy or counting cards.
+@return - an int the represents the chosen action
+*/
 int Player::MakeChoice() {
 
-    //this will eventually have strategy methods, but for now, always stay
     std::string choice;
-    while (true){
+    while (true){ //until valid choice
       std::cout << "Make your choice: 0 to stay, 1 to hit, 2 to double" << std::endl;
       std::getline (std::cin,choice);
       if (choice == "0" || choice == "1" || choice == "2") {
@@ -199,191 +215,243 @@ int Player::MakeChoice() {
 
 }
 
+/**
+Initializes the deck of given size, and an empty deck for the discard pile. It also does an
+initial shuffle, and burns the first card (discards it)
+@param decks - number of decks being used for the game
+*/
 Game::Game(int decks) : deck_(Deck(decks)), discard_(Deck(0)) {
     deck_.Shuffle();
-    this->burn_();
+    burn_();
 }
 
+//Draw card from deck_ and add to Person's hand
 void Game::deal_(Person *p) {
     p->AddToHand(deck_.Draw());
 }
 
+//Draw a card from the deck and add it to the discard pile
 void Game::burn_() {
     discard_.AddToDeck(deck_.Draw());
 }
 
+/**
+Takes action chosen and performs said Action
+@param choice - int representing the action
+@return - true if its an action that definitively ends players turn, false otherwise
+*/
 bool Game::DoTurn(int choice) {
 
-  if (choice == 0) {
-    std::cout << "You stay\n" ;
-    return true;
-  }else if (choice == 1) {
-    std::cout << "You hit\n" ;
-    deal_(&player_);
-    DisplayPlayer();
-    return false;
-  } else if (choice == 2) {
-    std::cout << "You double\n" ;
-    player_.Payout(player_.get_bet_());
-    player_.Bet(player_.get_bet_() * 2);
-    deal_(&player_);
-    DisplayPlayer();
-    return true;
-  } else {
-    //split
-    return false;
-  }
-}
+    if (choice == 0) {
 
-void Game::AssessResults() {
-  int dealer_score = dealer_.HandVal();
-  int player_score = player_.HandVal();
-  int bet = player_.get_bet_();
+        std::cout << "\nYou chose to stay.\n" ;
+        return true;
 
-  if (player_score == 21 && dealer_score != 21) {
-    if (player_.get_hand_().size() == 2) {
-      player_.Payout(bet * 2.5);
-      std::cout << "nice blackjack" << std::endl;
-    }
-  } else if (player_score == 0) {
-    std::cout << "You busted" << std::endl;
-  }
-  else {
-    if (player_score > dealer_score) {
-      std::cout << "You win" << std::endl;
-      player_.Payout(bet * 2);
-    } else if (player_score == dealer_score) {
-      std::cout << "push" << std::endl;
-      player_.Payout(bet);
+    } else if (choice == 1) {
+        //add card to hand and display new hand
+        std::cout << "\nYou chose to hit. Here's your new hand.\n" ;
+        deal_(&player_);
+        DisplayPlayer();
+        return false;
+
+    } else if (choice == 2) {
+        //Double the bet, add a one and only one card to hand, show new hand
+        std::cout << "\nYou double. Here's your new hand.\n" ;
+        player_.Payout(player_.get_bet_());
+        player_.Bet(player_.get_bet_() * 2);
+        deal_(&player_);
+        DisplayPlayer();
+        return true;
+
     } else {
-    std::cout << "you lose" << std::endl;
-  }
-    //else its a loss, which currently has no payout as the dealer doesn't
-    //have a total amount
-  }
+        //split. This currently isn't implemented and will never occur (see MakeChoice)
+        return false;
+    }
 }
 
+/**
+Using information from the game state, including player score, dealer score, and
+their hand sizes, determines win, lose, tie, or blackjack and pays out chips accordingly
+*/
+void Game::AssessResults() {
+    int dealer_score = dealer_.HandVal();
+    int player_score = player_.HandVal();
+    int bet = player_.get_bet_();
+
+    //Blackjack, pays 3/2
+    if (player_score == 21 && dealer_score != 21) {
+        if (player_.get_hand_().size() == 2) {
+            player_.Payout(bet * 2.5);
+            std::cout << "WINNER WINNER CHICKEN DINNER!" << std::endl;
+        }
+    } else if (player_score == 0) {
+        std::cout << "You busted..." << std::endl;
+    } else {
+        if (player_score > dealer_score) { //win
+            std::cout << "You win." << std::endl;
+            player_.Payout(bet * 2);
+        } else if (player_score == dealer_score) { //tie
+            std::cout << "Its a Push." << std::endl;
+            player_.Payout(bet);
+        } else {  //loss
+            if (dealer_score == 21 && dealer_.get_hand_().size() == 2){
+                std::cout << "Dealer has Blackjack!" << std::endl;
+            }
+            std::cout << "You lose." << std::endl;
+            //Because the dealer does not currently keep track of chips,
+            //no action is required. (Withdrawn from player when bet)
+        }
+    }
+}
+
+//Resets the game after a round
 void Game::Clear() {
-  std::vector<Card*> player_hand = player_.get_hand_();
-  std::vector<Card*> dealer_hand = dealer_.get_hand_();
+    std::vector<Card*> player_hand = player_.get_hand_();
+    std::vector<Card*> dealer_hand = dealer_.get_hand_();
 
-  for (int i = 0; i < player_hand.size(); i++) {
-    discard_.AddToDeck(player_hand[i]);
-  }
+    //move players hand to discard
+    for (int i = 0; i < player_hand.size(); i++) {
+        discard_.AddToDeck(player_hand[i]);
+    }
 
-  for (int i = 0; i < dealer_hand.size(); i++) {
-    discard_.AddToDeck(dealer_hand[i]);
-  }
-  player_.ClearHand();
-  dealer_.ClearHand();
-  player_.Bet(0);
+    //move dealers hand to discard
+    for (int i = 0; i < dealer_hand.size(); i++) {
+        discard_.AddToDeck(dealer_hand[i]);
+    }
 
-  std::cout << "Game reset" << std::endl;
-  std::cout << "Player hand size: " << player_.get_hand_().size() << std::endl;
-  std::cout << "Dealer hand size: " << dealer_.get_hand_().size() << std::endl;
-  std::cout << "Deck size: " << deck_.size() << std::endl;
-  std::cout << "Discard size: " << discard_.size() << std::endl;
-  std::cout << "Player chips: " << player_.get_chips_() << std::endl;
-  std::cout << std::endl << "----------------------------" << std::endl;
+    //clear last rounds data
+    player_.ClearHand();
+    dealer_.ClearHand();
+    player_.Bet(0);
+
+    //These were used to ensure the deck was decrementing corrently, and that it resets properly
+    // std::cout << "Deck size: " << deck_.size() << std::endl;
+    // std::cout << "Discard size: " << discard_.size() << std::endl;
+    std::cout << "Player Chips: " << player_.get_chips_() << std::endl;
+    std::cout << std::endl << "----------------------------" << std::endl;
 
 
 }
 
+//Replaces all discarded cards to deck
 void Game::ResetDeck() {
     for (int i = 0; i < discard_.size(); i++) {
       deck_.AddToDeck(discard_.get_card(i));
     }
     discard_.ClearDeck();
+    deck_.Shuffle();
+    burn_();
 }
 
+/**
+The following three functions create a simple text UI. These will be unnecessary when
+GUI is created
+*/
+
+//Print out Players hand
 void Game::DisplayPlayer() {
     //this is a placeholder for now for the UI
-    std::cout << std::endl << "Players hand: " << std::endl << std::endl;
+    std::cout << std::endl << "Player's hand:\n--------" << std::endl << std::endl;
     for (int i = 0; i < player_.get_hand_().size(); i++) {
-        std::cout << ValueStringify(player_.get_hand_()[i]->get_val()) << " of " << SuitStringify(player_.get_hand_()[i]->get_suit()) << std::endl;
+        std::cout << "  -  " << ValueStringify(player_.get_hand_()[i]->get_val()) << " of " << SuitStringify(player_.get_hand_()[i]->get_suit()) << std::endl;
     }
     std::cout << std::endl;
 }
 
+//Prints out Dealers hand
 void Game::DisplayDealer() {
-  std::cout << std::endl << "Dealers hand: " << std::endl << std::endl;
+  std::cout << std::endl << "Dealer's hand:\n-------- " << std::endl << std::endl;
   for (int i = 0; i < dealer_.get_hand_().size(); i++) {
-      std::cout << ValueStringify(dealer_.get_hand_()[i]->get_val()) << " of " << SuitStringify(player_.get_hand_()[i]->get_suit()) << std::endl;
+      std::cout << "  -  " << ValueStringify(dealer_.get_hand_()[i]->get_val()) << " of " << SuitStringify(player_.get_hand_()[i]->get_suit()) << std::endl;
   }
   std::cout << std::endl;
 }
 
+//Displays only the dealers face up card
 void Game::DisplayDealerShown() {
-  std::cout << std::endl << "Dealers showing card: " << std::endl << std::endl;
-  std::cout << ValueStringify(dealer_.get_hand_()[1]->get_val()) << " of " << SuitStringify(player_.get_hand_()[1]->get_suit()) << std::endl << std::endl;
+  std::cout << std::endl << "Dealer's showing card:\n--------" << std::endl << std::endl;
+  std::cout << "  -  " << ValueStringify(dealer_.get_hand_()[1]->get_val()) << " of " << SuitStringify(player_.get_hand_()[1]->get_suit()) << std::endl << std::endl;
 }
 
+//Initialize the bet, the intial deal, and ensure the deck is properly stocked
 void Game::SetupRound() {
 
+    //If 4/5s of the deck has been player. This is an approximation of normal shuffling. This may be
+    //replaces with a semi-random shuffle card (usually, the dealer inserts it toward the bottom)
     if (deck_.size() < (discard_.size() / 4)) {
       ResetDeck();
     }
-    //when a counting cards comes in, this can change
+
     std::cout << std::endl << "----------------------------" << std::endl;
+    //when a counting cards comes in, this can change to take a user input, or be determined
+    //by the strategy
     player_.Bet(10);
 
-    std::cout << "Player bets: " << player_.get_bet_() << std::endl;
+    std::cout << "Player's bet: " << player_.get_bet_() << std::endl;
 
-    deck_.Shuffle();
-
+    //Deal hands alternating to player and dealer
     deal_(&player_);
     deal_(&dealer_);
 
     deal_(&player_);
     deal_(&dealer_);
 
+    //Show player hand and dealer face up card
     DisplayPlayer();
     DisplayDealerShown();
 
 }
 
+/**
+Plays an actual round of the game, which encompasses betting, dealing, play, payout, and clearing.
+Shuffling and resetting the deck are also implemented if the state is right
+*/
 void Game::PlayRound() {
+    //collect bet, deal, reset deck if necessary
     SetupRound();
     int dealer_score = dealer_.HandVal();
     int player_score = player_.HandVal();
 
-    //TODO: Display state of table
+    //TODO: insurance offer if dealer_.get_hand_()[1]->get_val() == Value::A
 
-    if (dealer_.get_hand_()[1]->get_val() == Value::A) {
-        //TODO: insurance offer
-    }
-
+    //Either dealer, player, or both have blackjack, so round ends
     if (player_score == 21 || dealer_score == 21) {
-        //TODO: handle insurance
+        //TODO: handle insurance if dealer has blackjack
         AssessResults();
         Clear();
         return;
     }
 
-    //TODO: handle insurance
+    //TODO: handle insurance if dealer does not have blackjack
 
     bool stay = false;
+    //Player makes decision until they bust (player_score != 0) or choose a turn ending action (stay or double)
     while (player_score != 0 && !stay) {
-
-        int choice = player_.MakeChoice(); //strategy
-        stay = DoTurn(choice);
+        int choice = player_.MakeChoice(); //will eventually make use of strategy
+        stay = DoTurn(choice);  //true if turn ending, false if otherwise
         player_score = player_.HandVal();
-        std::cout << player_score << std::endl;
-
     }
 
+    //Reveal Dealer's hand
     DisplayDealer();
 
+    //If already busted, go to AssessResults
     if (player_score == 0) {
-      AssessResults();
-      Clear();
-      return;
+          AssessResults();
+          Clear();
+          return;
     } else {
-      while (dealer_score < 17 && dealer_score != 0) {
+        //dealer must hit until they have 17 or they bust. This does not take
+        //into account soft 17, which may be implemented later
+        while (dealer_score < 17 && dealer_score != 0) {
             deal_(&dealer_);
             dealer_score = dealer_.HandVal();
-            std::cout << "Dealer hits and now has: " << dealer_score << std::endl;
-      }
+            if (dealer_score != 0){
+                std::cout << "Dealer hits and now has: " << dealer_score << std::endl;
+            } else {
+                std::cout << "Dealer hits and busts!" << std::endl;
+            }
+        }
     }
 
     AssessResults();
