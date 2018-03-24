@@ -37,7 +37,7 @@
       ![double](/doc/screenshots/double.jpg)
 
       Blackjack:
-      ![double](/doc/screenshots/blackjack.jpg)
+      ![blackjack](/doc/screenshots/blackjack.jpg)
 
       Dealer has Blackjack:
-      ![double](/doc/screenshots/dealerBlackjack.jpg)
+      ![dealerblackjack](/doc/screenshots/dealerBlackjack.jpg)
