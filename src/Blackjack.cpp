@@ -1,4 +1,3 @@
-#include "Blackjack.h"
 #include <string>
 #include <iostream>
 #include <vector>
@@ -6,13 +5,7 @@
 #include <ctime>
 #include <tuple>
 
-//Cards are equal if they have the same Suit and Value
-bool operator==(Card lhs, Card rhs) {
-    if (lhs.get_val() == rhs.get_val() && lhs.get_suit() == rhs.get_suit()){
-        return true;
-    }
-    return false;
-}
+#include "Blackjack.h"
 
 //Convert enums to strings of their names
 std::string SuitStringify(Suit suit) {
@@ -56,7 +49,98 @@ std::string ValueStringify(Value val) {
                         break;
     }
 }
+std::string ActionStringify(Action act) {
+    switch (act) {
+        case Action::Hit : return "Hit";
+                        break;
+        case Action::Stay : return "Stay";
+                        break;
+        case Action::Double : return "Double";
+                        break;
+        case Action::Split : return "Split";
+                        break;
+        case Action::Surrender :  return "Surrender";
+                        break;
+    }
+}
 
+int ValueIntify(Value val) {
+    switch (val) {
+        case Value::Two : return 2;
+        case Value::Three : return 3;
+        case Value::Four : return 4;
+        case Value::Five : return 5;
+        case Value::Six : return 6;
+        case Value::Seven : return 7;
+        case Value::Eight : return 8;
+        case Value::Nine : return 9;
+        case Value::Ten :
+        case Value::J :
+        case Value::Q :
+        case Value::K : return 10;
+        case Value::A : return 11;
+    }
+}
+
+//Cards are equal if they have the same Suit and Value
+bool operator==(Card lhs, Card rhs) {
+    if (lhs.get_val() == rhs.get_val() && lhs.get_suit() == rhs.get_suit()){
+        return true;
+    }
+    return false;
+}
+
+Value increment(Value val) {
+    if (val == Value::Two) {
+        return Value::Three;
+    } else if (val == Value::Three) {
+        return Value::Four;
+    } else if (val == Value::Four) {
+        return Value::Five;
+    } else if (val == Value::Five) {
+        return Value::Six;
+    } else if (val == Value::Six) {
+        return Value::Seven;
+    } else if (val == Value::Seven) {
+        return Value::Eight;
+    } else if (val == Value::Eight) {
+        return Value::Nine;
+    } else if (val == Value::Nine) {
+        return Value::Ten;
+    } else if (val == Value::Ten) {
+        return Value::J;
+    } else if (val == Value::J) {
+        return Value::Q;
+    } else if (val == Value::Q) {
+        return Value::K;
+    } else {
+        return Value::A;
+    }
+}
+//Actions are equal if they are the same strings
+bool operator==(Action lhs, Action rhs) {
+    if (ActionStringify(lhs) == ActionStringify(rhs)) {
+        return true;
+    }
+    return false;
+}
+
+bool operator==(Value lhs, Value rhs) {
+    if (ValueStringify(lhs) == ValueStringify(rhs)) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+// bool operator>=(Value lhs, Value rhs) {
+//     if (lhs == Value::A) return true;
+//     else if (rhs == Value::A) return false;
+//     else return (increment(lhs) >= increment(rhs));
+// }
+// bool operator<(Value lhs, Value rhs) {
+//     return !(lhs >= rhs);
+// }
 //Build a vector of instances of all 52 cards
 CardFactory::CardFactory() {
     std::vector<Suit> suits {Suit::Spades, Suit::Diamonds, Suit::Clubs, Suit::Hearts};
@@ -202,19 +286,41 @@ takes. This is currently just a simple cin, but eventually this will be determin
 by basic strategy or counting cards.
 @return - an int the represents the chosen action
 */
-int Player::MakeChoice() {
+Action Player::MakeChoice() {
 
     std::string choice;
     while (true){ //until valid choice
       std::cout << "Make your choice: 0 to stay, 1 to hit, 2 to double" << std::endl;
       std::getline (std::cin,choice);
-      if (choice == "0" || choice == "1" || choice == "2") {
-        return stoi(choice);
+      if (choice == "0") {
+          return Action::Stay;
+      } else if (choice == "1") {
+          return Action::Hit;
+      } else if (choice == "2") {
+          return Action::Double;
       }
-    }
-
+  }
 }
 
+Action Player::BasicStrategy(Card* dealer_shown) {
+    int hand_val = this->HandVal();
+    int dealer_val = ValueIntify(dealer_shown->get_val());
+    if (hand_val >= 17) {
+        return Action::Stay;
+    } else {
+        switch(hand_val) {
+            case 16 :
+            case 15 :
+            case 14 :
+            case 13 : return (dealer_val >= 7 ? Action::Hit : Action::Stay);
+            case 12 : return (dealer_val >= 7 || dealer_val < ValueIntify(Value::Four) ? Action::Hit : Action::Stay);
+            case 11 : return (dealer_val == 11 ? Action::Hit : Action::Double);
+            case 10 : return (dealer_val >= 10 ? Action::Hit : Action::Double);
+            case 9 : return (dealer_val == 2 || dealer_val >= 7 ? Action::Hit : Action::Double);
+            default : return Action::Hit;
+        }
+    }
+}
 /**
 Initializes the deck of given size, and an empty deck for the discard pile. It also does an
 initial shuffle, and burns the first card (discards it)
@@ -240,21 +346,21 @@ Takes action chosen and performs said Action
 @param choice - int representing the action
 @return - true if its an action that definitively ends players turn, false otherwise
 */
-bool Game::DoTurn(int choice) {
+bool Game::DoTurn(Action choice) {
 
-    if (choice == 0) {
+    if (choice == Action::Stay) {
 
         std::cout << "\nYou chose to stay.\n" ;
         return true;
 
-    } else if (choice == 1) {
+    } else if (choice == Action::Hit) {
         //add card to hand and display new hand
         std::cout << "\nYou chose to hit. Here's your new hand.\n" ;
         deal_(&player_);
         DisplayPlayer();
         return false;
 
-    } else if (choice == 2) {
+    } else if (choice == Action::Double) {
         //Double the bet, add a one and only one card to hand, show new hand
         std::cout << "\nYou double. Here's your new hand.\n" ;
         player_.Payout(player_.get_bet_());
@@ -428,7 +534,7 @@ void Game::PlayRound() {
     bool stay = false;
     //Player makes decision until they bust (player_score != 0) or choose a turn ending action (stay or double)
     while (player_score != 0 && !stay) {
-        int choice = player_.MakeChoice(); //will eventually make use of strategy
+        Action choice = player_.MakeChoice(); //will eventually make use of strategy
         stay = DoTurn(choice);  //true if turn ending, false if otherwise
         player_score = player_.HandVal();
     }

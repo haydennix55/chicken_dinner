@@ -8,12 +8,13 @@
 
 enum class Value { Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, J, Q, K, A};
 enum class Suit { Spades, Diamonds, Clubs, Hearts};
-enum class Action { Hit, Stand, Double, Split, Surrender};
-//TODO: Replace current choice logic with enum to increase readability
+enum class Action { Hit, Stay, Double, Split, Surrender};
 
 //Convert enums to strings of their names
 std::string SuitStringify(Suit suit);
 std::string ValueStringify(Value val);
+std::string ActionStringify(Action act);
+int ValueIntify(Value val);
 
 //Card with Suit and Value fields
 struct Card {
@@ -31,6 +32,14 @@ struct Card {
 
 //Cards are equal if they have the same Suit and Value
 bool operator==(Card lhs, Card rhs);
+Value increment(Value val);
+//Actions are equal if they are the same strings
+bool operator==(Action lhs, Action rhs);
+//Overloaded equality for val and int
+bool operator==(Value lhs, Value rhs);
+// bool operator>=(Value lhs, Value rhs);
+// bool operator<(Value lhs, Value rhs);
+
 
 //Contains a vector of the 52 cards to be referenced to make decks
 struct CardFactory {
@@ -93,11 +102,12 @@ struct Player : public Person {
         void Bet(int amount) { bet_ = amount;
                               chips_ -= amount; };
         void Payout(int amount) { chips_ += amount; };
-        int MakeChoice();
+        Action MakeChoice();
 
     private:
         int chips_ = 1000;
         int bet_ = 0;
+        Action BasicStrategy(Card* dealer_shown);
 
 };
 
@@ -137,7 +147,8 @@ class Game {
         void ResetDeck();
         void SetupRound();
 
-        bool DoTurn(int choice);
+
+        bool DoTurn(Action choice);
         void AssessResults();
         void Clear();
 

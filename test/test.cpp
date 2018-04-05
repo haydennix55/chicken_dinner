@@ -35,6 +35,79 @@ TEST_CASE("Card struct","[card]"){
     }
 }
 
+TEST_CASE("Emum overload operators", "[enum]") {
+    //Note that the card equality operator is tested in the case test_case above
+    SECTION("Action equality") {
+        Action hit_ = Action::Hit;
+        Action stay_ = Action::Stay;
+        Action double_ = Action::Double;
+        Action split_ = Action::Split;
+        Action surrender_ = Action::Surrender;
+
+        REQUIRE(hit_ == Action::Hit);
+        REQUIRE(stay_ == Action::Stay);
+        REQUIRE(double_ == Action::Double);
+        REQUIRE(split_ == Action::Split);
+        REQUIRE(surrender_ == Action::Surrender);
+    }
+
+    SECTION("Value equality/inequality") {
+        Value two = Value::Two;
+        Value three = Value::Three;
+        Value four = Value::Four;
+        Value five = Value::Five;
+        Value six = Value::Six;
+        Value seven = Value::Seven;
+        Value eight = Value::Eight;
+        Value nine = Value::Nine;
+        Value ten = Value::Ten;
+        Value j = Value::J;
+        Value q = Value::Q;
+        Value k = Value::K;
+        Value a = Value::A;
+
+        //equality of literal value
+        REQUIRE(two == Value::Two);
+        REQUIRE(three == Value::Three);
+        REQUIRE(four == Value::Four);
+        REQUIRE(five == Value::Five);
+        REQUIRE(six == Value::Six);
+        REQUIRE(seven == Value::Seven);
+        REQUIRE(eight == Value::Eight);
+        REQUIRE(nine == Value::Nine);
+        REQUIRE(ten == Value::Ten);
+        REQUIRE(j == Value::J);
+        REQUIRE(q == Value::Q);
+        REQUIRE(k == Value::K);
+        REQUIRE(a == Value::A);
+
+        //greater than or equal to of intify
+        REQUIRE(ValueIntify(a) >= ValueIntify(two));
+        REQUIRE(ValueIntify(k) >= ValueIntify(three));
+        REQUIRE(ValueIntify(q) >= ValueIntify(four));
+        REQUIRE(ValueIntify(j) >= ValueIntify(five));
+        REQUIRE_FALSE(ValueIntify(six) >= ValueIntify(ten));
+        REQUIRE_FALSE(ValueIntify(seven) >= ValueIntify(nine));
+        REQUIRE(ValueIntify(eight) >= ValueIntify(eight));
+
+        //equal to intify
+        REQUIRE(ValueIntify(a) == ValueIntify(a));
+        REQUIRE(ValueIntify(ten) == ValueIntify(j));
+        REQUIRE(ValueIntify(q) == ValueIntify(k));
+        REQUIRE(ValueIntify(k) == ValueIntify(ten));
+
+        //less than
+        REQUIRE_FALSE(ValueIntify(a) < ValueIntify(two));
+        REQUIRE_FALSE(ValueIntify(k) < ValueIntify(three));
+        REQUIRE_FALSE(ValueIntify(q) < ValueIntify(four));
+        REQUIRE_FALSE(ValueIntify(j) < ValueIntify(five));
+        REQUIRE(ValueIntify(six) < ValueIntify(ten));
+        REQUIRE(ValueIntify(seven) < ValueIntify(nine));
+        REQUIRE_FALSE(ValueIntify(eight) < ValueIntify(eight));
+    }
+
+}
+
 TEST_CASE("Stringify returns expected strings", "[Stringify]"){
 
     SECTION("using SuitStringify"){
