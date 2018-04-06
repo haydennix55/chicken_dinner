@@ -223,6 +223,7 @@ TEST_CASE("HandVal in Person base class", "[handval]") {
     Card *seven_of_hearts = new Card(Suit::Hearts, Value::Seven);
     Card *eight_of_hearts = new Card(Suit::Hearts, Value::Eight);
     Card *nine_of_hearts = new Card(Suit::Hearts, Value::Nine);
+    Card *ace_of_diamonds = new Card(Suit::Diamonds, Value::A);
 
     Card *ace_of_spades = new Card(Suit::Spades, Value::A);
     Card *queen_of_diamonds = new Card(Suit::Diamonds, Value::Q);
@@ -312,6 +313,24 @@ TEST_CASE("HandVal in Person base class", "[handval]") {
 
     }
 
+    SECTION("Soft Ace check") {
+        p.AddToHand(ace_of_spades);
+        p.AddToHand(seven_of_hearts);
+        REQUIRE(p.HasSoftAce());
+
+        p.AddToHand(ace_of_diamonds);
+        REQUIRE(p.HasSoftAce());
+
+        p.AddToHand(ace_of_spades);
+        REQUIRE(p.HasSoftAce());
+
+        p.AddToHand(nine_of_hearts);
+        REQUIRE_FALSE(p.HasSoftAce());
+
+        p.AddToHand(ace_of_spades);
+        REQUIRE_FALSE(p.HasSoftAce());
+    }
+
 }
 
 TEST_CASE("Game", "[game]") {
@@ -338,5 +357,86 @@ TEST_CASE("Game", "[game]") {
     only has one public member function, which requires user input.
     */
 
+}
 
+TEST_CASE("Basic Strategy") {
+    Player p;
+    Card *two_of_hearts = new Card(Suit::Hearts, Value::Two);
+    Card *three_of_hearts = new Card(Suit::Hearts, Value::Three);
+    Card *four_of_hearts = new Card(Suit::Hearts, Value::Four);
+    Card *five_of_hearts = new Card(Suit::Hearts, Value::Five);
+    Card *six_of_hearts = new Card(Suit::Hearts, Value::Six);
+    Card *seven_of_hearts = new Card(Suit::Hearts, Value::Seven);
+    Card *eight_of_hearts = new Card(Suit::Hearts, Value::Eight);
+    Card *nine_of_hearts = new Card(Suit::Hearts, Value::Nine);
+    Card *ten_of_hearts = new Card(Suit::Hearts, Value::Ten);
+    Card *jack_of_hearts = new Card(Suit::Hearts, Value::J);
+    Card *ace_of_diamonds = new Card(Suit::Diamonds, Value::A);
+
+    Card *ace_of_spades = new Card(Suit::Spades, Value::A);
+    Card *queen_of_diamonds = new Card(Suit::Diamonds, Value::Q);
+
+    SECTION("Soft Ace Hands") {
+        p.AddToHand(ace_of_spades);
+        p.AddToHand(two_of_hearts);
+
+        REQUIRE(p.BasicStrategy(five_of_hearts) == Action::Double);
+        REQUIRE(p.BasicStrategy(seven_of_hearts) == Action::Hit);
+
+        p.AddToHand(ace_of_spades);
+        p.AddToHand(ace_of_spades);
+
+        REQUIRE(p.BasicStrategy(four_of_hearts) == Action::Double);
+
+        p.ClearHand();
+
+        p.AddToHand(ace_of_spades);
+        p.AddToHand(seven_of_hearts);
+
+        REQUIRE(p.BasicStrategy(five_of_hearts) == Action::Double);
+        REQUIRE(p.BasicStrategy(queen_of_diamonds) == Action::Hit);
+
+        p.ClearHand();
+
+        p.AddToHand(ace_of_spades);
+        p.AddToHand(jack_of_hearts);
+
+        REQUIRE(p.BasicStrategy(three_of_hearts) == Action::Stay);
+        REQUIRE(p.BasicStrategy(ten_of_hearts) == Action::Stay);
+
+
+    }
+
+    SECTION("Doubles") {
+
+        p.AddToHand(eight_of_hearts);
+        p.AddToHand(eight_of_hearts);
+        REQUIRE(p.BasicStrategy(seven_of_hearts) == Action::Split);
+
+        p.ClearHand();
+
+        p.AddToHand(ace_of_spades);
+        p.AddToHand(ace_of_spades);
+        REQUIRE(p.BasicStrategy(nine_of_hearts) == Action::Split);
+
+        p.ClearHand();
+        //
+        p.AddToHand(nine_of_hearts);
+        p.AddToHand(nine_of_hearts);
+        REQUIRE(p.BasicStrategy(seven_of_hearts) == Action::Stay);
+        REQUIRE(p.BasicStrategy(eight_of_hearts) == Action::Split);
+
+        p.ClearHand();
+
+        p.AddToHand(five_of_hearts);
+        p.AddToHand(five_of_hearts);
+        REQUIRE(p.BasicStrategy(four_of_hearts) == Action::Double);
+        REQUIRE(p.BasicStrategy(ace_of_spades) == Action::Hit);
+
+
+    }
+
+    SECTION("Normal Hands") {
+
+    }
 }

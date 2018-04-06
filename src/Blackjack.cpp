@@ -125,22 +125,6 @@ bool operator==(Action lhs, Action rhs) {
     return false;
 }
 
-bool operator==(Value lhs, Value rhs) {
-    if (ValueStringify(lhs) == ValueStringify(rhs)) {
-        return true;
-    }
-    else {
-        return false;
-    }
-}
-// bool operator>=(Value lhs, Value rhs) {
-//     if (lhs == Value::A) return true;
-//     else if (rhs == Value::A) return false;
-//     else return (increment(lhs) >= increment(rhs));
-// }
-// bool operator<(Value lhs, Value rhs) {
-//     return !(lhs >= rhs);
-// }
 //Build a vector of instances of all 52 cards
 CardFactory::CardFactory() {
     std::vector<Suit> suits {Suit::Spades, Suit::Diamonds, Suit::Clubs, Suit::Hearts};
@@ -211,38 +195,7 @@ int Person::HandVal() {
     //for every card in hand, update potential value
     for (int i = 0; i < hand_.size(); i++) {
 
-        card_val = 0;
-        //determine value to increment hand values with
-        switch (hand_[i]->get_val()) {
-
-            case Value::Two : card_val = 2;
-                            break;
-            case Value::Three : card_val = 3;
-                            break;
-            case Value::Four : card_val = 4;
-                            break;
-            case Value::Five : card_val = 5;
-                            break;
-            case Value::Six : card_val = 6;
-                            break;
-            case Value::Seven : card_val = 7;
-                            break;
-            case Value::Eight : card_val = 8;
-                            break;
-            case Value::Nine : card_val = 9;
-                            break;
-            case Value::Ten : card_val = 10;
-                            break;
-            case Value::J : card_val = 10;
-                            break;
-            case Value::Q : card_val = 10;
-                            break;
-            case Value::K : card_val = 10;
-                            break;
-            case Value::A : card_val = 11;
-                            break;
-
-        }
+        card_val = ValueIntify(hand_[i]->get_val());
 
         int temp = hand_values.size();
 
@@ -280,6 +233,31 @@ int Person::HandVal() {
 
 }
 
+bool Person::HasSoftAce() {
+    int ace_count = 0;
+    int size = hand_.size();
+    std::vector<Card*> temp_hand = hand_;
+    for (int i = 0; i < size;) {
+        if (temp_hand[i]->get_val() == Value::A) {
+            ace_count++;
+            temp_hand.erase(temp_hand.begin() + i);
+            size--;
+        } else {
+            i++;
+        }
+    }
+
+    int temp_hand_val = 0;
+    for (int i = 0; i < temp_hand.size(); i++) {
+        temp_hand_val += ValueIntify(temp_hand[i]->get_val());
+    }
+    if (HandVal() == (temp_hand_val + ace_count)) return false;
+
+    return true;
+
+
+}
+
 /**
 Given the players hand and the showing dealer card, determine what action to
 takes. This is currently just a simple cin, but eventually this will be determined
@@ -305,7 +283,41 @@ Action Player::MakeChoice() {
 Action Player::BasicStrategy(Card* dealer_shown) {
     int hand_val = this->HandVal();
     int dealer_val = ValueIntify(dealer_shown->get_val());
-    if (hand_val >= 17) {
+
+    if (hand_.size() == 2 && hand_[0] == hand_[1]) {
+        if (hand_[0]->get_val() == Value::A || hand_[0]->get_val() == Value::Eight) {
+            return Action::Split;
+        } else if (ValueIntify(hand_[0]->get_val()) == 10) {
+            return Action::Stay;
+        } else {
+            switch(ValueIntify(hand_[0]->get_val())) {
+                case 9: return (dealer_val <= 9 && dealer_val != 7 ? Action::Split : Action::Stay);
+                case 7:
+                case 3:
+                case 2: return (dealer_val <= 7 ? Action::Split : Action::Hit);
+                case 6: return (dealer_val <= 6 ? Action::Split : Action::Hit);
+                case 5: return (dealer_val <= 9 ? Action::Double : Action::Hit);
+                case 4: return (dealer_val == 5 || dealer_val == 6 ? Action::Split : Action::Hit);
+            }
+        }
+    } else if (this->HasSoftAce() ) {
+        switch(hand_val) {
+            case 21:
+            case 20:
+            case 19: return Action::Stay;
+            case 18: if (dealer_val >= 9) {
+                return Action::Hit;
+            } else {
+                if (dealer_val >= 3 && dealer_val < 7) return Action::Double;
+                return Action::Stay;
+            }
+            case 17: return (dealer_val >= 3 && dealer_val < 7 ? Action::Double : Action::Hit);
+            case 16:
+            case 15: return (dealer_val >= 4 && dealer_val < 7 ? Action::Double : Action::Hit);
+            case 14:
+            case 13: return (dealer_val >= 5 && dealer_val < 7 ? Action::Double : Action::Hit);
+        }
+    } else if (hand_val >= 17) {
         return Action::Stay;
     } else {
         switch(hand_val) {

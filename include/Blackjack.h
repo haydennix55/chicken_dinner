@@ -35,10 +35,6 @@ bool operator==(Card lhs, Card rhs);
 Value increment(Value val);
 //Actions are equal if they are the same strings
 bool operator==(Action lhs, Action rhs);
-//Overloaded equality for val and int
-bool operator==(Value lhs, Value rhs);
-// bool operator>=(Value lhs, Value rhs);
-// bool operator<(Value lhs, Value rhs);
 
 
 //Contains a vector of the 52 cards to be referenced to make decks
@@ -86,6 +82,7 @@ struct Person {
         void AddToHand(Card *c) { hand_.push_back(c); };
         void ClearHand() { hand_.clear(); };
         int HandVal();
+        bool HasSoftAce();
 
     protected:
         std::vector<Card*> hand_;
@@ -103,11 +100,10 @@ struct Player : public Person {
                               chips_ -= amount; };
         void Payout(int amount) { chips_ += amount; };
         Action MakeChoice();
-
+        Action BasicStrategy(Card* dealer_shown);
     private:
         int chips_ = 1000;
         int bet_ = 0;
-        Action BasicStrategy(Card* dealer_shown);
 
 };
 
