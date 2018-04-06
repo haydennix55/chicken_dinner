@@ -264,11 +264,11 @@ takes. This is currently just a simple cin, but eventually this will be determin
 by basic strategy or counting cards.
 @return - an int the represents the chosen action
 */
-Action Player::MakeChoice() {
+Action Player::MakeChoice(Card* dealer_shown) {
 
     std::string choice;
     while (true){ //until valid choice
-      std::cout << "Make your choice: 0 to stay, 1 to hit, 2 to double" << std::endl;
+      std::cout << "Make your choice: 0 to stay, 1 to hit, 2 to double, or 3 to see what basic strategy would say" << std::endl;
       std::getline (std::cin,choice);
       if (choice == "0") {
           return Action::Stay;
@@ -276,6 +276,8 @@ Action Player::MakeChoice() {
           return Action::Hit;
       } else if (choice == "2") {
           return Action::Double;
+      } else if (choice == "3") {
+          std::cout << "Basic Strategy would say to " << ActionStringify(this->BasicStrategy(dealer_shown)) << "." << std::endl;
       }
   }
 }
@@ -298,6 +300,7 @@ Action Player::BasicStrategy(Card* dealer_shown) {
                 case 6: return (dealer_val <= 6 ? Action::Split : Action::Hit);
                 case 5: return (dealer_val <= 9 ? Action::Double : Action::Hit);
                 case 4: return (dealer_val == 5 || dealer_val == 6 ? Action::Split : Action::Hit);
+                default: throw std::runtime_error("Unreachable code in basic strat");
             }
         }
     } else if (this->HasSoftAce() ) {
@@ -316,6 +319,7 @@ Action Player::BasicStrategy(Card* dealer_shown) {
             case 15: return (dealer_val >= 4 && dealer_val < 7 ? Action::Double : Action::Hit);
             case 14:
             case 13: return (dealer_val >= 5 && dealer_val < 7 ? Action::Double : Action::Hit);
+            default: throw std::runtime_error("Unreachable code in basic strat");
         }
     } else if (hand_val >= 17) {
         return Action::Stay;
@@ -370,6 +374,7 @@ bool Game::DoTurn(Action choice) {
         std::cout << "\nYou chose to hit. Here's your new hand.\n" ;
         deal_(&player_);
         DisplayPlayer();
+        DisplayDealerShown();
         return false;
 
     } else if (choice == Action::Double) {
@@ -379,6 +384,7 @@ bool Game::DoTurn(Action choice) {
         player_.Bet(player_.get_bet_() * 2);
         deal_(&player_);
         DisplayPlayer();
+        DisplayDealerShown();
         return true;
 
     } else {
@@ -546,7 +552,7 @@ void Game::PlayRound() {
     bool stay = false;
     //Player makes decision until they bust (player_score != 0) or choose a turn ending action (stay or double)
     while (player_score != 0 && !stay) {
-        Action choice = player_.MakeChoice(); //will eventually make use of strategy
+        Action choice = player_.MakeChoice(dealer_.get_hand_()[1]); //will eventually make use of strategy
         stay = DoTurn(choice);  //true if turn ending, false if otherwise
         player_score = player_.HandVal();
     }

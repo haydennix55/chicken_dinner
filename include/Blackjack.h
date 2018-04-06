@@ -99,7 +99,7 @@ struct Player : public Person {
         void Bet(int amount) { bet_ = amount;
                               chips_ -= amount; };
         void Payout(int amount) { chips_ += amount; };
-        Action MakeChoice();
+        Action MakeChoice(Card* dealer_shown);
         Action BasicStrategy(Card* dealer_shown);
     private:
         int chips_ = 1000;

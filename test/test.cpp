@@ -329,6 +329,15 @@ TEST_CASE("HandVal in Person base class", "[handval]") {
 
         p.AddToHand(ace_of_spades);
         REQUIRE_FALSE(p.HasSoftAce());
+
+        p.ClearHand();
+
+        p.AddToHand(ace_of_spades);
+        p.AddToHand(five_of_hearts);
+        p.AddToHand(queen_of_diamonds);
+        p.AddToHand(ace_of_spades);
+
+        REQUIRE_FALSE(p.HasSoftAce());
     }
 
 }
@@ -437,6 +446,30 @@ TEST_CASE("Basic Strategy") {
     }
 
     SECTION("Normal Hands") {
+        p.AddToHand(four_of_hearts);
+        p.AddToHand(six_of_hearts);
+        p.AddToHand(five_of_hearts);
 
+        REQUIRE(p.BasicStrategy(six_of_hearts) == Action::Stay);
+        REQUIRE(p.BasicStrategy(seven_of_hearts) == Action::Hit);
+
+        p.ClearHand();
+
+        p.AddToHand(ace_of_spades);
+        p.AddToHand(five_of_hearts);
+        p.AddToHand(queen_of_diamonds);
+        p.AddToHand(ace_of_spades);
+        std::cout << p.HandVal();
+
+        REQUIRE(p.BasicStrategy(two_of_hearts) == Action::Stay);
+        REQUIRE(p.BasicStrategy(ace_of_spades) == Action::Stay);
+
+        p.ClearHand();
+
+        p.AddToHand(two_of_hearts);
+        p.AddToHand(seven_of_hearts);
+
+        REQUIRE(p.BasicStrategy(two_of_hearts) == Action::Hit);
+        REQUIRE(p.BasicStrategy(six_of_hearts) == Action::Double);
     }
 }
