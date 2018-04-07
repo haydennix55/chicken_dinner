@@ -9,6 +9,7 @@
 enum class Value { Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, J, Q, K, A};
 enum class Suit { Spades, Diamonds, Clubs, Hearts};
 enum class Action { Hit, Stay, Double, Split, Surrender};
+enum class Mode { Player, Basic, Counting};
 
 //Convert enums to strings of their names
 std::string SuitStringify(Suit suit);
@@ -40,7 +41,7 @@ bool operator==(Action lhs, Action rhs);
 
 //Contains a vector of the 52 cards to be referenced to make decks
 struct CardFactory {
-    
+
     public:
         CardFactory();
         Card* get_card(int index);
@@ -129,7 +130,7 @@ class Game {
         Deck get_deck_() { return deck_; };
         Deck get_discard_() { return discard_; };
 
-        void PlayRound();
+        void PlayRound(Mode mode);
 
     private:
         Player player_;

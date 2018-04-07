@@ -252,7 +252,7 @@ Action Player::MakeChoice(Card* dealer_shown) {
 
     std::string choice;
     while (true){ //until valid choice
-      std::cout << "Make your choice: 0 to stay, 1 to hit, 2 to double, or 3 to see what basic strategy would say" << std::endl;
+      std::cout << "Make your choice: 0 to stay, 1 to hit, 2 to double, 3 to split, or 4 to see what basic strategy would say" << std::endl;
       std::getline (std::cin,choice);
       if (choice == "0") {
           return Action::Stay;
@@ -261,6 +261,12 @@ Action Player::MakeChoice(Card* dealer_shown) {
       } else if (choice == "2") {
           return Action::Double;
       } else if (choice == "3") {
+          if (hand_.size() == 2 && ValueIntify(hand_[0]->get_val()) == ValueIntify(hand_[1]->get_val())) {
+              return Action::Split;
+          } else {
+              std::cout << "You can only split on a hand of two cards with the same value" << std::endl;
+          }
+      } else if (choice == "4") {
           std::cout << "Basic Strategy would say to " << ActionStringify(this->BasicStrategy(dealer_shown)) << "." << std::endl;
       }
   }
@@ -277,7 +283,7 @@ Action Player::BasicStrategy(Card* dealer_shown) {
     int dealer_val = ValueIntify(dealer_shown->get_val()); //int value of dealers face up card
 
     //If the player hand is doubles
-    if (hand_.size() == 2 && hand_[0] == hand_[1]) {
+    if (hand_.size() == 2 && ValueIntify(hand_[0]->get_val()) == ValueIntify(hand_[1]->get_val())) {
         if (hand_[0]->get_val() == Value::A || hand_[0]->get_val() == Value::Eight) {
             return Action::Split;
         } else if (ValueIntify(hand_[0]->get_val()) == 10) {
@@ -383,7 +389,8 @@ bool Game::DoTurn(Action choice) {
 
     } else {
         //split. This currently isn't implemented and will never occur (see MakeChoice)
-        return false;
+        std::cout << "You split" << std::endl;
+        return true;
     }
 }
 
@@ -525,7 +532,7 @@ void Game::SetupRound() {
 Plays an actual round of the game, which encompasses betting, dealing, play, payout, and clearing.
 Shuffling and resetting the deck are also implemented if the state is right
 */
-void Game::PlayRound() {
+void Game::PlayRound(Mode mode) {
     //collect bet, deal, reset deck if necessary
     SetupRound();
     int dealer_score = dealer_.HandVal();
@@ -545,8 +552,14 @@ void Game::PlayRound() {
 
     bool stay = false;
     //Player makes decision until they bust (player_score != 0) or choose a turn ending action (stay or double)
+
+    Action choice;
     while (player_score != 0 && !stay) {
-        Action choice = player_.MakeChoice(dealer_.get_hand_()[1]); //will eventually make use of strategy
+        if (mode == Mode::Basic) choice = player_.BasicStrategy(dealer_.get_hand_()[1]);
+        else choice = player_.MakeChoice(dealer_.get_hand_()[1]);
+        if (choice == Action::Split) {
+            std::cout << "Split has not yet been implemented" << std::endl; //eventually this will be split functionality
+        }
         stay = DoTurn(choice);  //true if turn ending, false if otherwise
         player_score = player_.HandVal();
     }
