@@ -17,7 +17,6 @@ int main() {
       if (choice == "0" || choice == "1") break;
   }
 
-  std::cout << choice << std::endl;
   if (choice == "0") {
       while (true) {
         g->PlayRound(Mode::Player);

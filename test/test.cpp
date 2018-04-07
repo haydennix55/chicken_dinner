@@ -459,7 +459,6 @@ TEST_CASE("Basic Strategy") {
         p.AddToHand(five_of_hearts);
         p.AddToHand(queen_of_diamonds);
         p.AddToHand(ace_of_spades);
-        std::cout << p.HandVal();
 
         REQUIRE(p.BasicStrategy(two_of_hearts) == Action::Stay);
         REQUIRE(p.BasicStrategy(ace_of_spades) == Action::Stay);
