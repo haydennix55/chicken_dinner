@@ -8,12 +8,16 @@
 
 enum class Value { Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, J, Q, K, A};
 enum class Suit { Spades, Diamonds, Clubs, Hearts};
-enum class Action { Hit, Stand, Double, Split, Surrender};
-//TODO: Replace current choice logic with enum to increase readability
+enum class Action { Hit, Stay, Double, Split, Surrender};
+enum class Mode { Player, Basic, Counting};
 
 //Convert enums to strings of their names
 std::string SuitStringify(Suit suit);
 std::string ValueStringify(Value val);
+std::string ActionStringify(Action act);
+
+//Convert card values to their numerical values (11 for Ace)
+int ValueIntify(Value val);
 
 //Card with Suit and Value fields
 struct Card {
@@ -31,6 +35,9 @@ struct Card {
 
 //Cards are equal if they have the same Suit and Value
 bool operator==(Card lhs, Card rhs);
+//Actions are equal if they are the same strings
+bool operator==(Action lhs, Action rhs);
+
 
 //Contains a vector of the 52 cards to be referenced to make decks
 struct CardFactory {
@@ -77,6 +84,7 @@ struct Person {
         void AddToHand(Card *c) { hand_.push_back(c); };
         void ClearHand() { hand_.clear(); };
         int HandVal();
+        bool HasSoftAce();
 
     protected:
         std::vector<Card*> hand_;
@@ -93,8 +101,8 @@ struct Player : public Person {
         void Bet(int amount) { bet_ = amount;
                               chips_ -= amount; };
         void Payout(int amount) { chips_ += amount; };
-        int MakeChoice();
-
+        Action MakeChoice(Card* dealer_shown);
+        Action BasicStrategy(Card* dealer_shown);
     private:
         int chips_ = 1000;
         int bet_ = 0;
@@ -122,7 +130,7 @@ class Game {
         Deck get_deck_() { return deck_; };
         Deck get_discard_() { return discard_; };
 
-        void PlayRound();
+        void PlayRound(Mode mode);
 
     private:
         Player player_;
@@ -137,7 +145,8 @@ class Game {
         void ResetDeck();
         void SetupRound();
 
-        bool DoTurn(int choice);
+
+        bool DoTurn(Action choice);
         void AssessResults();
         void Clear();
 
