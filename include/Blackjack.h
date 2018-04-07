@@ -14,6 +14,8 @@ enum class Action { Hit, Stay, Double, Split, Surrender};
 std::string SuitStringify(Suit suit);
 std::string ValueStringify(Value val);
 std::string ActionStringify(Action act);
+
+//Convert card values to their numerical values (11 for Ace)
 int ValueIntify(Value val);
 
 //Card with Suit and Value fields
@@ -32,14 +34,13 @@ struct Card {
 
 //Cards are equal if they have the same Suit and Value
 bool operator==(Card lhs, Card rhs);
-Value increment(Value val);
 //Actions are equal if they are the same strings
 bool operator==(Action lhs, Action rhs);
 
 
 //Contains a vector of the 52 cards to be referenced to make decks
 struct CardFactory {
-
+    
     public:
         CardFactory();
         Card* get_card(int index);

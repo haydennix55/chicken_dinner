@@ -64,6 +64,7 @@ std::string ActionStringify(Action act) {
     }
 }
 
+//Convert card values to their game values (11 for ace)
 int ValueIntify(Value val) {
     switch (val) {
         case Value::Two : return 2;
@@ -90,33 +91,6 @@ bool operator==(Card lhs, Card rhs) {
     return false;
 }
 
-Value increment(Value val) {
-    if (val == Value::Two) {
-        return Value::Three;
-    } else if (val == Value::Three) {
-        return Value::Four;
-    } else if (val == Value::Four) {
-        return Value::Five;
-    } else if (val == Value::Five) {
-        return Value::Six;
-    } else if (val == Value::Six) {
-        return Value::Seven;
-    } else if (val == Value::Seven) {
-        return Value::Eight;
-    } else if (val == Value::Eight) {
-        return Value::Nine;
-    } else if (val == Value::Nine) {
-        return Value::Ten;
-    } else if (val == Value::Ten) {
-        return Value::J;
-    } else if (val == Value::J) {
-        return Value::Q;
-    } else if (val == Value::Q) {
-        return Value::K;
-    } else {
-        return Value::A;
-    }
-}
 //Actions are equal if they are the same strings
 bool operator==(Action lhs, Action rhs) {
     if (ActionStringify(lhs) == ActionStringify(rhs)) {
@@ -167,6 +141,7 @@ Card* Deck::Draw() {
     return c;
 }
 
+//Mixes the cards in a decks card* vector
 void Deck::Shuffle() {
     std::vector<Card*> newDeck;
     int deck_size = deck_.size();
@@ -233,10 +208,17 @@ int Person::HandVal() {
 
 }
 
+/**
+Determines if there is an Ace in the player's hand that is being used for a value
+of 11. Technically, a hand is soft when you can hit without the risk of going over 21,
+but strategy is only different for soft aces vs. hard aces
+@return -  true if it has a soft ace, false otherwise
+*/
 bool Person::HasSoftAce() {
-    int ace_count = 0;
+    int ace_count = 0; //number of aces in hand
     int size = hand_.size();
     std::vector<Card*> temp_hand = hand_;
+    //remove all aces from hand and increment ace count
     for (int i = 0; i < size;) {
         if (temp_hand[i]->get_val() == Value::A) {
             ace_count++;
@@ -246,15 +228,17 @@ bool Person::HasSoftAce() {
             i++;
         }
     }
-
+    //determine value of hand without aces
     int temp_hand_val = 0;
     for (int i = 0; i < temp_hand.size(); i++) {
         temp_hand_val += ValueIntify(temp_hand[i]->get_val());
     }
+    //if the val of the full hand is the value of the hand without aces
+    //plus the number of aces in the full hand, that means all aces are
+    //being used with a value of 1, and not soft
     if (HandVal() == (temp_hand_val + ace_count)) return false;
 
     return true;
-
 
 }
 
@@ -282,10 +266,17 @@ Action Player::MakeChoice(Card* dealer_shown) {
   }
 }
 
+/**
+Given the dealers face up card and the players hand, return the action
+with the lowest statistical probablity of losing. These choices were determined
+with simulation.
+@return - the best action a player should take given the game state
+*/
 Action Player::BasicStrategy(Card* dealer_shown) {
-    int hand_val = this->HandVal();
-    int dealer_val = ValueIntify(dealer_shown->get_val());
+    int hand_val = this->HandVal(); //playable value of players hand
+    int dealer_val = ValueIntify(dealer_shown->get_val()); //int value of dealers face up card
 
+    //If the player hand is doubles
     if (hand_.size() == 2 && hand_[0] == hand_[1]) {
         if (hand_[0]->get_val() == Value::A || hand_[0]->get_val() == Value::Eight) {
             return Action::Split;
@@ -300,10 +291,11 @@ Action Player::BasicStrategy(Card* dealer_shown) {
                 case 6: return (dealer_val <= 6 ? Action::Split : Action::Hit);
                 case 5: return (dealer_val <= 9 ? Action::Double : Action::Hit);
                 case 4: return (dealer_val == 5 || dealer_val == 6 ? Action::Split : Action::Hit);
+                //this stops a warning for non-void function exit, but should never occur
                 default: throw std::runtime_error("Unreachable code in basic strat");
             }
         }
-    } else if (this->HasSoftAce() ) {
+    } else if (this->HasSoftAce() ) { //hands with a soft ace can make more aggressive plays
         switch(hand_val) {
             case 21:
             case 20:
@@ -319,12 +311,13 @@ Action Player::BasicStrategy(Card* dealer_shown) {
             case 15: return (dealer_val >= 4 && dealer_val < 7 ? Action::Double : Action::Hit);
             case 14:
             case 13: return (dealer_val >= 5 && dealer_val < 7 ? Action::Double : Action::Hit);
+            //this stops a warning for non-void function exit, but should never occur
             default: throw std::runtime_error("Unreachable code in basic strat");
         }
-    } else if (hand_val >= 17) {
+    } else if (hand_val >= 17) { //any other hands over 17
         return Action::Stay;
     } else {
-        switch(hand_val) {
+        switch(hand_val) { //all other hands
             case 16 :
             case 15 :
             case 14 :
@@ -333,10 +326,11 @@ Action Player::BasicStrategy(Card* dealer_shown) {
             case 11 : return (dealer_val == 11 ? Action::Hit : Action::Double);
             case 10 : return (dealer_val >= 10 ? Action::Hit : Action::Double);
             case 9 : return (dealer_val == 2 || dealer_val >= 7 ? Action::Hit : Action::Double);
-            default : return Action::Hit;
+            default : return Action::Hit; //all hands under 9
         }
     }
 }
+
 /**
 Initializes the deck of given size, and an empty deck for the discard pile. It also does an
 initial shuffle, and burns the first card (discards it)
