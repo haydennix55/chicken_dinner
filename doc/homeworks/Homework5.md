@@ -25,7 +25,7 @@
    4. Screenshots
 
       Basic Strategy Suggestions:
-      ![advice](/doc/screenshots/basicadvice,jpg)
+      ![advice](/doc/screenshots/basicadvice.jpg)
 
       100 Rounds w/ Basic Strategy:
       ![rounds](/doc/screenshots/100rounds.jpg)
