@@ -129,7 +129,9 @@ class Game {
         Dealer get_dealer_() { return dealer_; };
         Deck get_deck_() { return deck_; };
         Deck get_discard_() { return discard_; };
+        float get_true_count_() { return true_count_; };
 
+        void UpdateTrueCount(Card* c);
         void PlayRound(Mode mode);
 
     private:
@@ -137,6 +139,9 @@ class Game {
         Dealer dealer_;
         Deck deck_;
         Deck discard_;
+        int num_of_decks_;
+        float count_;
+        float true_count_;
         void deal_(Person *p);
         void burn_();
         void DisplayPlayer();

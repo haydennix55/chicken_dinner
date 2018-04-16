@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <tuple>
+#include <cmath>
 
 #include "Blackjack.h"
 
@@ -342,14 +343,16 @@ Initializes the deck of given size, and an empty deck for the discard pile. It a
 initial shuffle, and burns the first card (discards it)
 @param decks - number of decks being used for the game
 */
-Game::Game(int decks) : deck_(Deck(decks)), discard_(Deck(0)) {
+Game::Game(int decks) : deck_(Deck(decks)), discard_(Deck(0)), num_of_decks_(decks) {
     deck_.Shuffle();
     burn_();
 }
 
 //Draw card from deck_ and add to Person's hand
 void Game::deal_(Person *p) {
-    p->AddToHand(deck_.Draw());
+    Card *c = deck_.Draw();
+    UpdateTrueCount(c);
+    p->AddToHand(c);
 }
 
 //Draw a card from the deck and add it to the discard pile
@@ -408,6 +411,7 @@ void Game::AssessResults() {
         if (player_.get_hand_().size() == 2) {
             player_.Payout(bet * 2.5);
             std::cout << "WINNER WINNER CHICKEN DINNER!" << std::endl;
+            return;
         }
     }
     if (player_score == 0) {
@@ -467,6 +471,8 @@ void Game::ResetDeck() {
     discard_.ClearDeck();
     deck_.Shuffle();
     burn_();
+    count_ = 0;
+    true_count_ = 0;
 }
 
 /**
@@ -488,7 +494,7 @@ void Game::DisplayPlayer() {
 void Game::DisplayDealer() {
   std::cout << std::endl << "Dealer's hand:\n-------- " << std::endl << std::endl;
   for (int i = 0; i < dealer_.get_hand_().size(); i++) {
-      std::cout << "  -  " << ValueStringify(dealer_.get_hand_()[i]->get_val()) << " of " << SuitStringify(player_.get_hand_()[i]->get_suit()) << std::endl;
+      std::cout << "  -  " << ValueStringify(dealer_.get_hand_()[i]->get_val()) << " of " << SuitStringify(dealer_.get_hand_()[i]->get_suit()) << std::endl;
   }
   std::cout << std::endl;
 }
@@ -496,7 +502,7 @@ void Game::DisplayDealer() {
 //Displays only the dealers face up card
 void Game::DisplayDealerShown() {
   std::cout << std::endl << "Dealer's showing card:\n--------" << std::endl << std::endl;
-  std::cout << "  -  " << ValueStringify(dealer_.get_hand_()[1]->get_val()) << " of " << SuitStringify(player_.get_hand_()[1]->get_suit()) << std::endl << std::endl;
+  std::cout << "  -  " << ValueStringify(dealer_.get_hand_()[1]->get_val()) << " of " << SuitStringify(dealer_.get_hand_()[1]->get_suit()) << std::endl << std::endl;
 }
 
 //Initialize the bet, the intial deal, and ensure the deck is properly stocked
@@ -511,6 +517,12 @@ void Game::SetupRound() {
     std::cout << std::endl << "----------------------------" << std::endl;
     //when a counting cards comes in, this can change to take a user input, or be determined
     //by the strategy
+
+    // if (true_count_ < 1) {
+    //     player_.Bet(0);
+    // } else {
+    //     player_.Bet(10 * round(true_count_));
+    // }
     player_.Bet(10);
 
     std::cout << "Player's bet: " << player_.get_bet_() << std::endl;
@@ -528,6 +540,31 @@ void Game::SetupRound() {
 
 }
 
+void Game::UpdateTrueCount(Card* c) {
+    switch (ValueIntify(c->get_val())) {
+        case 2:
+        case 3:
+        case 7: count_++;
+                break;
+        case 4:
+        case 5:
+        case 6: count_ += 2;
+                break;
+        case 11: count_ -= 1;
+                break;
+        case 10: count_ -= 2;
+                break;
+        default:
+                break;
+    }
+
+    float remaining_decks = ((float)deck_.size() / (num_of_decks_ * 52)) * num_of_decks_;
+
+    remaining_decks = round(remaining_decks * 2) / 2;
+
+    true_count_ = count_ / remaining_decks;
+
+}
 /**
 Plays an actual round of the game, which encompasses betting, dealing, play, payout, and clearing.
 Shuffling and resetting the deck are also implemented if the state is right
@@ -580,8 +617,10 @@ void Game::PlayRound(Mode mode) {
             dealer_score = dealer_.HandVal();
             if (dealer_score != 0){
                 std::cout << "Dealer hits and now has: " << dealer_score << std::endl;
+                DisplayDealer();
             } else {
-                std::cout << "Dealer hits and busts!" << std::endl;
+                std::cout << "Dealer hits and draws a " << ValueStringify(dealer_.get_hand_()[dealer_.get_hand_().size() - 1]->get_val())
+                << " of " <<  SuitStringify(dealer_.get_hand_()[dealer_.get_hand_().size() - 1]->get_suit()) << " and busts!" << std::endl;
             }
         }
     }
