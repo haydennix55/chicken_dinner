@@ -17,7 +17,7 @@ The code is currently tested on Linux and Mac OS X. On these operating systems, 
 
 ### Downloading and Running Application
 
-This section is currently not applicable. This will be filled when there is a packaged application. However, you can play the game or simulate rounds with basic strategy in the terminal. See 'Development'.
+This section is currently not applicable. This will be filled when there is a packaged application. However, you can play the game with a GUI using QTCreator, or play the game and simulate rounds using the terminal. See 'Development'.
 
 ### Development
 
@@ -39,7 +39,7 @@ Start by cloning the repository to your local machine.
 
 * __Running the App__
 
-   * There is currently a terminal based game and basic strategy simulation implemented. To play, see above about command `make`
+   * You can see the currently implementation of the app using the 'Build and Run GUI' instructions below. Currently, a gameplay GUI has been implemented, so have fun! Otherwise, you can use the 'Download, Build, and Run Source Code' instructions above to play the game using a terminal text ui and simulate rounds.
 
 * __Build and Run GUI__
 
@@ -47,7 +47,7 @@ Start by cloning the repository to your local machine.
 
    * Select "Open Project"
 
-   * Select the `chicken_dinner_gui.pro` file inside `chicken_dinner/chicken_dinner_gui`
+   * Select the `chicken_dinner.pro` file inside `chicken_dinner/chicken_dinner_ui/src`
 
    * Click the play button to build and run
 
