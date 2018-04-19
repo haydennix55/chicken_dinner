@@ -518,12 +518,12 @@ void Game::SetupRound() {
     //when a counting cards comes in, this can change to take a user input, or be determined
     //by the strategy
 
-    // if (true_count_ < 1) {
-    //     player_.Bet(0);
-    // } else {
-    //     player_.Bet(10 * round(true_count_));
-    // }
-    player_.Bet(10);
+    if (true_count_ < 1) {
+        player_.Bet(10);
+    } else {
+        player_.Bet(10 * round(true_count_ / 2));
+    }
+    //player_.Bet(10);
 
     std::cout << "Player's bet: " << player_.get_bet_() << std::endl;
 

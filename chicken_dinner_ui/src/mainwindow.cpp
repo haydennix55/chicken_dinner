@@ -23,6 +23,7 @@ void MainWindow::on_closeButton_clicked()
 
 void MainWindow::on_playButton_clicked()
 {
+    //open actual play window
     playwindow = new PlayWindow(this);
     playwindow->show();
     this->hide();
@@ -30,12 +31,12 @@ void MainWindow::on_playButton_clicked()
 
 void MainWindow::on_basicButton_clicked()
 {
-    this->hide();
+    //TODO: Implement visuals for simulation
 }
 
 void MainWindow::on_countingButton_clicked()
 {
-    this->hide();
+    //TODO: Implement visuals for simulation
 }
 
 void MainWindow::on_actionQuit_triggered()

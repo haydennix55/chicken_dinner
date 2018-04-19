@@ -5,6 +5,7 @@
 
 int main(int argc, char *argv[])
 {
+    //load menu window
     QApplication a(argc, argv);
     MainWindow w;
     w.show();

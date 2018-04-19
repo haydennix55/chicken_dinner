@@ -8,6 +8,7 @@
 #include <map>
 #include <Blackjack.h>
 #include <cmath>
+#include <QString>
 
 PlayWindow::PlayWindow(QWidget *parent, int decks) :
     QMainWindow(parent),
@@ -20,16 +21,30 @@ PlayWindow::PlayWindow(QWidget *parent, int decks) :
     QPixmap pix(":/images/images/blackjack_table.png");
     ui->tableLabel->setPixmap(pix);
     ui->tableLabel->lower();
+    ui->chipsLabel->setStyleSheet("QLabel {color : white; }");
+    ui->betLabel->setStyleSheet("QLabel {color : white; }");
+    ui->chipsDisplay->setStyleSheet("QLabel {color : white; }");
+    ui->betDisplay->setStyleSheet("QLabel {color : white; }");
+    ui->hintLabel->setStyleSheet("QLabel {color : white; }");
+    ui->chipsDisplay->setText(QString::number(player_.get_chips_()));
+    ui->betDisplay->setText(QString::number(player_.get_bet_()));
     this->statusBar()->setSizeGripEnabled(false);
-    this->setFixedSize(700,500);
+    this->setFixedSize(690,500);
     loadList();
     deck_.Shuffle();
     burn_();
     ui->stayButton->setEnabled(false);
     ui->hitButton->setEnabled(false);
     ui->doubleButton->setEnabled(false);
+    ui->hintButton->setEnabled(false);
 }
 
+/**
+ * Determines the index in the list of card images that corresponds for a given card
+ * @param v is the value of the needed card
+ * @param s is the suit of the needed card
+ * @return index in cardHolder of needed card
+ */
 int PlayWindow::DetermineImageIndex(Value v, Suit s) {
     int suit_index;
     int value_index;
@@ -80,6 +95,11 @@ int PlayWindow::DetermineImageIndex(Value v, Suit s) {
     return ((suit_index * 13) + value_index);
 }
 
+/**
+ * @brief Display the card png to the gui interface (players only)
+ * @param index is the position in cardHolder of the card to display
+ * @param label is the position on the screen to place the card
+ */
 void PlayWindow::ShowCard(int index, int label) {
     switch (label) {
 
@@ -106,6 +126,11 @@ void PlayWindow::ShowCard(int index, int label) {
     }
 }
 
+/**
+ * @brief Display the card png to the gui interface (dealers only)
+ * @param index is the position in cardHolder of the card to display
+ * @param label is the position on the screen to place the card
+ */
 void PlayWindow::ShowCardDealer(int index, int label) {
     switch (label) {
 
@@ -186,9 +211,8 @@ void PlayWindow::ResetDeck() {
     true_count_ = 0;
 }
 
-//Print out Players hand
+//Displays players hand in card pngs to the screen
 void PlayWindow::DisplayPlayer() {
-    //this is a placeholder for now for the UI
     Value v;
     Suit s;
     int imageIndex;
@@ -203,7 +227,7 @@ void PlayWindow::DisplayPlayer() {
     std::cout << std::endl;
 }
 
-//Prints out Dealers hand
+//Displays dealers full hand in card pngs to the screen
 void PlayWindow::DisplayDealer() {
     //this is a placeholder for now for the UI
     Value v;
@@ -220,7 +244,7 @@ void PlayWindow::DisplayDealer() {
     std::cout << std::endl;
 }
 
-//Displays only the dealers face up card
+//Displays dealers face up and face down card in card pngs
 void PlayWindow::DisplayDealerShown() {
   std::cout << std::endl << "Dealer's showing card:\n--------" << std::endl << std::endl;
   std::cout << "  -  " << ValueStringify(dealer_.get_hand_()[0]->get_val()) << " of " << SuitStringify(dealer_.get_hand_()[0]->get_suit()) << std::endl << std::endl;
@@ -230,6 +254,7 @@ void PlayWindow::DisplayDealerShown() {
 
 //Initialize the bet, the intial deal, and ensure the deck is properly stocked
 void PlayWindow::SetupRound() {
+    //ensure card pngs from previous game are cleared
     ui->card0Label->clear();
     ui->card1Label->clear();
     ui->card2Label->clear();
@@ -258,15 +283,6 @@ void PlayWindow::SetupRound() {
       ResetDeck();
     }
 
-    std::cout << std::endl << "----------------------------" << std::endl;
-    //when a counting cards comes in, this can change to take a user input, or be determined
-    //by the strategy
-
-    // if (true_count_ < 1) {
-    //     player_.Bet(0);
-    // } else {
-    //     player_.Bet(10 * round(true_count_));
-    // }
     player_.Bet(10);
 
     std::cout << "Player's bet: " << player_.get_bet_() << std::endl;
@@ -282,8 +298,16 @@ void PlayWindow::SetupRound() {
     DisplayPlayer();
     DisplayDealerShown();
 
+    //show current bet and chips
+    ui->chipsDisplay->setText(QString::number(player_.get_chips_()));
+    ui->betDisplay->setText(QString::number(player_.get_bet_()));
+
 }
 
+/**
+ * @brief Updates the true count value of the game using the Zen count methodology
+ * @param c is the last drawn card, used to update the count and therefore, the true count
+ */
 void PlayWindow::UpdateTrueCount(Card* c) {
     switch (ValueIntify(c->get_val())) {
         case 2:
@@ -310,12 +334,16 @@ void PlayWindow::UpdateTrueCount(Card* c) {
 
 }
 
-bool PlayWindow::DoTurn(Action choice) {
+/**
+ * @brief Handles dealing, additional betting, etc. for new moves
+ * @param choice - the chosen action on a given turn
+ */
+void PlayWindow::DoTurn(Action choice) {
 
     if (choice == Action::Stay) {
 
         std::cout << "\nYou chose to stay.\n" ;
-        return true;
+        return;
 
     } else if (choice == Action::Hit) {
         //add card to hand and display new hand
@@ -323,7 +351,7 @@ bool PlayWindow::DoTurn(Action choice) {
         deal_(&player_);
         DisplayPlayer();
         DisplayDealerShown();
-        return false;
+        return;
 
     } else if (choice == Action::Double) {
         //Double the bet, add a one and only one card to hand, show new hand
@@ -333,15 +361,16 @@ bool PlayWindow::DoTurn(Action choice) {
         deal_(&player_);
         DisplayPlayer();
         DisplayDealerShown();
-        return true;
+        return;
 
     } else {
         //split. This currently isn't implemented and will never occur (see MakeChoice)
         std::cout << "You split" << std::endl;
-        return true;
+        return;
     }
 }
 
+//Dealer continutes to hit until they have 17 (must hit on soft 17)
 void PlayWindow::DealerTurn() {
     while (true) {
         DisplayDealer();
@@ -350,14 +379,21 @@ void PlayWindow::DealerTurn() {
         } else if (dealer_.HandVal() == 17 && !dealer_.HasSoftAce()){
             break;
         } else {
+            // dealer has less than 17 or a soft 17
             deal_(&dealer_);
         }
     }
 }
+
+//Determine Payouts and finalize ui
 void PlayWindow::AssessResults() {
+
+    //disable action buttons
     ui->hitButton->setEnabled(false);
     ui->doubleButton->setEnabled(false);
     ui->stayButton->setEnabled(false);
+    ui->hintButton->setEnabled(false);
+
     int dealer_score = dealer_.HandVal();
     int player_score = player_.HandVal();
     int bet = player_.get_bet_();
@@ -390,19 +426,12 @@ void PlayWindow::AssessResults() {
     }
 }
 
-void PlayWindow::PlayRound(Mode mode) {
-
-}
-
-
-
-
+//Create 'cardHolder' of pngs of all the cards
 void PlayWindow::loadList(){
 
     // Clear List
     cardHolder.clear();
 
-    // Load in Spades
     QPixmap card1(":/images/images/cards/ace_of_spades.png");
     QPixmap card2(":/images/images/cards/2_of_spades.png");
     QPixmap card3(":/images/images/cards/3_of_spades.png");
@@ -416,8 +445,6 @@ void PlayWindow::loadList(){
     QPixmap card11(":/images/images/cards/jack_of_spades2.png");
     QPixmap card12(":/images/images/cards/queen_of_spades2.png");
     QPixmap card13(":/images/images/cards/king_of_spades2.png");
-
-    // Load in Hearts
 
     QPixmap card14(":/images/images/cards/ace_of_hearts.png");
     QPixmap card15(":/images/images/cards/2_of_hearts.png");
@@ -433,8 +460,6 @@ void PlayWindow::loadList(){
     QPixmap card25(":/images/images/cards/queen_of_hearts2.png");
     QPixmap card26(":/images/images/cards/king_of_hearts2.png");
 
-    // Load in clubs
-
     QPixmap card27(":/images/images/cards/ace_of_clubs.png");
     QPixmap card28(":/images/images/cards/2_of_clubs.png");
     QPixmap card29(":/images/images/cards/3_of_clubs.png");
@@ -448,8 +473,6 @@ void PlayWindow::loadList(){
     QPixmap card37(":/images/images/cards/jack_of_clubs2.png");
     QPixmap card38(":/images/images/cards/queen_of_clubs2.png");
     QPixmap card39(":/images/images/cards/king_of_clubs2.png");
-
-    // Load in diamonds
 
     QPixmap card40(":/images/images/cards/ace_of_diamonds.png");
     QPixmap card41(":/images/images/cards/2_of_diamonds.png");
@@ -466,7 +489,6 @@ void PlayWindow::loadList(){
     QPixmap card52(":/images/images/cards/king_of_diamonds2.png");
     QPixmap card53(":/images/images/cards/back.png");
 
-    // add Spades to List
     cardHolder.append(card1);
     cardHolder.append(card2);
     cardHolder.append(card3);
@@ -481,7 +503,6 @@ void PlayWindow::loadList(){
     cardHolder.append(card12);
     cardHolder.append(card13);
 
-    // add Hearts to List
     cardHolder.append(card14);
     cardHolder.append(card15);
     cardHolder.append(card16);
@@ -496,7 +517,6 @@ void PlayWindow::loadList(){
     cardHolder.append(card25);
     cardHolder.append(card26);
 
-    // add clubs to List
     cardHolder.append(card27);
     cardHolder.append(card28);
     cardHolder.append(card29);
@@ -511,7 +531,6 @@ void PlayWindow::loadList(){
     cardHolder.append(card38);
     cardHolder.append(card39);
 
-    // add Diamonds to List
     cardHolder.append(card40);
     cardHolder.append(card41);
     cardHolder.append(card42);
@@ -536,11 +555,15 @@ PlayWindow::~PlayWindow()
     delete ui;
 }
 
+
+//SLOTS
+
 void PlayWindow::on_actionQuit_triggered()
 {
     QApplication::quit();
 }
 
+//Set up round and check for blackjacks
 void PlayWindow::on_dealButton_released()
 {
     SetupRound();
@@ -557,33 +580,57 @@ void PlayWindow::on_dealButton_released()
     ui->hitButton->setEnabled(true);
     ui->doubleButton->setEnabled(true);
     ui->stayButton->setEnabled(true);
+    ui->hintButton->setEnabled(true);
     ui->dealButton->setEnabled(false);
 }
 
+//Move on to dealers turn and reset game
 void PlayWindow::on_stayButton_released()
 {
     DealerTurn();
     AssessResults();
     Clear();
+    ui->chipsDisplay->setText(QString::number(player_.get_chips_()));
+    ui->betDisplay->setText(QString::number(player_.get_bet_()));
 }
 
+//Add card, if busted, reset game
 void PlayWindow::on_hitButton_released()
 {
-    bool okay = DoTurn(Action::Hit);
+    DoTurn(Action::Hit);
     if (player_.HandVal() == 0) {
         DisplayDealer();
         AssessResults();
         Clear();
+        ui->chipsDisplay->setText(QString::number(player_.get_chips_()));
+        ui->betDisplay->setText(QString::number(player_.get_bet_()));
 
     }
+    //disabling double, as you can only double on a two card hand
     ui->doubleButton->setEnabled(false);
 }
 
+//Add one card, then move on to dealer turn
 void PlayWindow::on_doubleButton_released()
 {
-    bool okay = DoTurn(Action::Double);
+    DoTurn(Action::Double);
     DealerTurn();
     AssessResults();
     Clear();
+    ui->chipsDisplay->setText(QString::number(player_.get_chips_()));
+    ui->betDisplay->setText(QString::number(player_.get_bet_()));
 
+}
+
+//Basic Strategy suggestion appears when holding down hint button
+void PlayWindow::on_hintButton_pressed()
+{
+    std::string a = "Basic strategy would say to " + ActionStringify(player_.BasicStrategy(dealer_.get_hand_()[0]));
+    ui->hintLabel->setText(QString::fromStdString(a));
+}
+
+//Basic Strategy suggestion disappears when hint button is released
+void PlayWindow::on_hintButton_released()
+{
+     ui->hintLabel->setText(QString::fromStdString(""));
 }

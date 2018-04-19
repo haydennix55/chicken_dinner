@@ -26,7 +26,6 @@ public:
     float get_true_count_() { return true_count_; }
 
     void UpdateTrueCount(Card* c);
-    void PlayRound(Mode mode);
 
 
 public slots:
@@ -44,6 +43,10 @@ private slots:
 
     void on_doubleButton_released();
 
+    void on_hintButton_pressed();
+
+    void on_hintButton_released();
+
 private:
     Ui::PlayWindow *ui;
     Player player_;
@@ -53,6 +56,7 @@ private:
     int num_of_decks_;
     float count_;
     float true_count_;
+
     void deal_(Person *p);
     void burn_();
     void DisplayPlayer();
@@ -63,9 +67,7 @@ private:
     int DetermineImageIndex(Value v, Suit s);
     void ShowCard(int index, int label);
     void ShowCardDealer(int index, int label);
-
-
-    bool DoTurn(Action choice);
+    void DoTurn(Action choice);
     void DealerTurn();
     void AssessResults();
     void Clear();

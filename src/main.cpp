@@ -23,7 +23,7 @@ int main() {
         g->PlayRound(Mode::Player);
       }
   } else {
-      for (int i = 0; i < 100; i++) {
+      for (int i = 0; i < 10000; i++) {
           g->PlayRound(Mode::Basic);
       }
   }
