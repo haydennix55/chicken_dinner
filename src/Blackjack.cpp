@@ -458,6 +458,7 @@ void Game::Clear() {
     // std::cout << "Deck size: " << deck_.size() << std::endl;
     // std::cout << "Discard size: " << discard_.size() << std::endl;
     std::cout << "Player Chips: " << player_.get_chips_() << std::endl;
+    std::cout << "True Count: " << get_true_count_() << std::endl;
     std::cout << std::endl << "----------------------------" << std::endl;
 
 
@@ -519,9 +520,11 @@ void Game::SetupRound() {
     //by the strategy
 
     if (true_count_ < 1) {
-        player_.Bet(10);
+        player_.Bet(100);
+    } else if (true_count_ < 15){
+        player_.Bet(100 * round(true_count_ / 2));
     } else {
-        player_.Bet(10 * round(true_count_ / 2));
+        player_.Bet(100 * round(true_count_ / 2));
     }
     //player_.Bet(10);
 
@@ -540,6 +543,10 @@ void Game::SetupRound() {
 
 }
 
+/**
+ * @brief Updates the true count value of the game using the Zen count methodology
+ * @param c is the last drawn card, used to update the count and therefore, the true count
+ */
 void Game::UpdateTrueCount(Card* c) {
     switch (ValueIntify(c->get_val())) {
         case 2:
