@@ -2,7 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "calcwindow.h"
+#include "playwindow.h"
+#include <Blackjack.h>
+#include <cmath>
 
 namespace Ui {
 class MainWindow;
@@ -15,20 +17,23 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    PlayWindow *playwindow;
 
-public slots:
 
 private slots:
+    void on_closeButton_clicked();
 
-    void on_houseEdge_clicked();
+    void on_playButton_clicked();
 
-    void on_gameSim_clicked();
+    void on_actionQuit_triggered();
 
-    void on_gameStrategies_clicked();
+
+    void on_basicButton_clicked();
+
+    void on_countingButton_clicked();
 
 private:
     Ui::MainWindow *ui;
-    QWindow *CalcWindow;
 };
 
 #endif // MAINWINDOW_H
