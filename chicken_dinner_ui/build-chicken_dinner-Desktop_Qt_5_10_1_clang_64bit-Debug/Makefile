@@ -53,16 +53,20 @@ OBJECTS_DIR   = ./
 SOURCES       = ../src/main.cpp \
 		../src/mainwindow.cpp \
 		../src/playwindow.cpp \
-		../src/Blackjack.cpp qrc_images.cpp \
+		../src/Blackjack.cpp \
+		../src/basicwindow.cpp qrc_images.cpp \
 		moc_mainwindow.cpp \
-		moc_playwindow.cpp
+		moc_playwindow.cpp \
+		moc_basicwindow.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
 		playwindow.o \
 		Blackjack.o \
+		basicwindow.o \
 		qrc_images.o \
 		moc_mainwindow.o \
-		moc_playwindow.o
+		moc_playwindow.o \
+		moc_basicwindow.o
 DIST          = ../../../../Qt/5.10.1/clang_64/mkspecs/features/spec_pre.prf \
 		../../../../Qt/5.10.1/clang_64/mkspecs/qdevice.pri \
 		../../../../Qt/5.10.1/clang_64/mkspecs/features/device_config.prf \
@@ -251,10 +255,12 @@ DIST          = ../../../../Qt/5.10.1/clang_64/mkspecs/features/spec_pre.prf \
 		../../../../Qt/5.10.1/clang_64/mkspecs/features/lex.prf \
 		../src/chicken_dinner.pro ../src/mainwindow.h \
 		../src/playwindow.h \
-		../src/Blackjack.h ../src/main.cpp \
+		../src/Blackjack.h \
+		../src/basicwindow.h ../src/main.cpp \
 		../src/mainwindow.cpp \
 		../src/playwindow.cpp \
-		../src/Blackjack.cpp
+		../src/Blackjack.cpp \
+		../src/basicwindow.cpp
 QMAKE_TARGET  = BlackJack
 DESTDIR       = 
 TARGET        = BlackJack.app/Contents/MacOS/BlackJack
@@ -268,7 +274,7 @@ EXPORT_ARCH_ARGS = $(foreach arch, $(if $(EXPORT_ACTIVE_ARCHS), $(EXPORT_ACTIVE_
 first: all
 ####### Build rules
 
-$(TARGET): ui_mainwindow.h ui_playwindow.h $(OBJECTS)  
+$(TARGET): ui_mainwindow.h ui_playwindow.h ui_basicwindow.h $(OBJECTS)  
 	@test -d BlackJack.app/Contents/MacOS/ || mkdir -p BlackJack.app/Contents/MacOS/
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJCOMP) $(LIBS)
 
@@ -686,9 +692,9 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../src/images.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents ../../../../Qt/5.10.1/clang_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../src/mainwindow.h ../src/playwindow.h ../src/Blackjack.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../src/main.cpp ../src/mainwindow.cpp ../src/playwindow.cpp ../src/Blackjack.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../src/mainwindow.ui ../src/playwindow.ui $(DISTDIR)/
+	$(COPY_FILE) --parents ../src/mainwindow.h ../src/playwindow.h ../src/Blackjack.h ../src/basicwindow.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../src/main.cpp ../src/mainwindow.cpp ../src/playwindow.cpp ../src/Blackjack.cpp ../src/basicwindow.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../src/mainwindow.ui ../src/playwindow.ui ../src/basicwindow.ui $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -784,9 +790,9 @@ compiler_moc_predefs_clean:
 moc_predefs.h: ../../../../Qt/5.10.1/clang_64/mkspecs/features/data/dummy.cpp
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ -pipe -stdlib=libc++ -g -std=gnu++11 $(EXPORT_ARCH_ARGS) -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk -mmacosx-version-min=10.10 -Wall -W -dM -E -o moc_predefs.h ../../../../Qt/5.10.1/clang_64/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_mainwindow.cpp moc_playwindow.cpp
+compiler_moc_header_make_all: moc_mainwindow.cpp moc_playwindow.cpp moc_basicwindow.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_mainwindow.cpp moc_playwindow.cpp
+	-$(DEL_FILE) moc_mainwindow.cpp moc_playwindow.cpp moc_basicwindow.cpp
 moc_mainwindow.cpp: ../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/QMainWindow \
 		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qmainwindow.h \
 		../src/playwindow.h \
@@ -808,13 +814,24 @@ moc_playwindow.cpp: ../../../../Qt/5.10.1/clang_64/lib/QtCore.framework/Headers/
 		../../../../Qt/5.10.1/clang_64/bin/moc
 	/Users/Hayden/Qt/5.10.1/clang_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/Users/Hayden/Qt/5.10.1/clang_64/mkspecs/macx-clang -I/Users/Hayden/git/personal/chicken_dinner_ui/src -I/Users/Hayden/Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers -I/Users/Hayden/Qt/5.10.1/clang_64/lib/QtGui.framework/Headers -I/Users/Hayden/Qt/5.10.1/clang_64/lib/QtCore.framework/Headers -I. -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1 -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/9.1.0/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/usr/include -F/Users/Hayden/Qt/5.10.1/clang_64/lib ../src/playwindow.h -o moc_playwindow.cpp
 
+moc_basicwindow.cpp: ../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/QMainWindow \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qmainwindow.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtCore.framework/Headers/QObject \
+		../../../../Qt/5.10.1/clang_64/lib/QtCore.framework/Headers/qobject.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/QWidget \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qwidget.h \
+		../src/basicwindow.h \
+		moc_predefs.h \
+		../../../../Qt/5.10.1/clang_64/bin/moc
+	/Users/Hayden/Qt/5.10.1/clang_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/Users/Hayden/Qt/5.10.1/clang_64/mkspecs/macx-clang -I/Users/Hayden/git/personal/chicken_dinner_ui/src -I/Users/Hayden/Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers -I/Users/Hayden/Qt/5.10.1/clang_64/lib/QtGui.framework/Headers -I/Users/Hayden/Qt/5.10.1/clang_64/lib/QtCore.framework/Headers -I. -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1 -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/9.1.0/include -I/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk/usr/include -F/Users/Hayden/Qt/5.10.1/clang_64/lib ../src/basicwindow.h -o moc_basicwindow.cpp
+
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
-compiler_uic_make_all: ui_mainwindow.h ui_playwindow.h
+compiler_uic_make_all: ui_mainwindow.h ui_playwindow.h ui_basicwindow.h
 compiler_uic_clean:
-	-$(DEL_FILE) ui_mainwindow.h ui_playwindow.h
+	-$(DEL_FILE) ui_mainwindow.h ui_playwindow.h ui_basicwindow.h
 ui_mainwindow.h: ../src/mainwindow.ui \
 		../../../../Qt/5.10.1/clang_64/bin/uic
 	/Users/Hayden/Qt/5.10.1/clang_64/bin/uic ../src/mainwindow.ui -o ui_mainwindow.h
@@ -822,6 +839,10 @@ ui_mainwindow.h: ../src/mainwindow.ui \
 ui_playwindow.h: ../src/playwindow.ui \
 		../../../../Qt/5.10.1/clang_64/bin/uic
 	/Users/Hayden/Qt/5.10.1/clang_64/bin/uic ../src/playwindow.ui -o ui_playwindow.h
+
+ui_basicwindow.h: ../src/basicwindow.ui \
+		../../../../Qt/5.10.1/clang_64/bin/uic
+	/Users/Hayden/Qt/5.10.1/clang_64/bin/uic ../src/basicwindow.ui -o ui_basicwindow.h
 
 compiler_rez_source_make_all:
 compiler_rez_source_clean:
@@ -864,11 +885,22 @@ playwindow.o: ../src/playwindow.cpp ../src/playwindow.h \
 		../src/Blackjack.h \
 		ui_playwindow.h \
 		../../../../Qt/5.10.1/clang_64/lib/QtGui.framework/Headers/QList \
-		../../../../Qt/5.10.1/clang_64/lib/QtGui.framework/Headers/qevent.h
+		../../../../Qt/5.10.1/clang_64/lib/QtGui.framework/Headers/qevent.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtCore.framework/Headers/QString \
+		../../../../Qt/5.10.1/clang_64/lib/QtCore.framework/Headers/qstring.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o playwindow.o ../src/playwindow.cpp
 
 Blackjack.o: ../src/Blackjack.cpp ../src/Blackjack.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Blackjack.o ../src/Blackjack.cpp
+
+basicwindow.o: ../src/basicwindow.cpp ../src/basicwindow.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/QMainWindow \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qmainwindow.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtCore.framework/Headers/QObject \
+		../../../../Qt/5.10.1/clang_64/lib/QtCore.framework/Headers/qobject.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/QWidget \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qwidget.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o basicwindow.o ../src/basicwindow.cpp
 
 qrc_images.o: qrc_images.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_images.o qrc_images.cpp
@@ -878,6 +910,9 @@ moc_mainwindow.o: moc_mainwindow.cpp
 
 moc_playwindow.o: moc_playwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_playwindow.o moc_playwindow.cpp
+
+moc_basicwindow.o: moc_basicwindow.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_basicwindow.o moc_basicwindow.cpp
 
 ####### Install
 

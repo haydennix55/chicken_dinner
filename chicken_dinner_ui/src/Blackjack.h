@@ -104,7 +104,7 @@ struct Player : public Person {
         Action MakeChoice(Card* dealer_shown);
         Action BasicStrategy(Card* dealer_shown);
     private:
-        int chips_ = 1000;
+        int chips_ = 10000;
         int bet_ = 0;
 
 };
@@ -114,6 +114,45 @@ struct Dealer : public Person {
     public:
         Dealer() : Person() {};
     private:
+};
+
+class Game {
+
+    public:
+        Game(int decks);
+        ~Game() {std::cout << "game deleted" << std::endl;};
+        Player get_player_() { return player_; };
+        Dealer get_dealer_() { return dealer_; };
+        Deck get_deck_() { return deck_; };
+        Deck get_discard_() { return discard_; };
+        float get_true_count_() { return true_count_; };
+
+        void UpdateTrueCount(Card* c);
+        void PlayRound(Mode mode);
+
+    private:
+        Player player_;
+        Dealer dealer_;
+        Deck deck_;
+        Deck discard_;
+        int num_of_decks_;
+        float count_;
+        float true_count_;
+        void deal_(Person *p);
+        void burn_();
+        void DisplayPlayer();
+        void DisplayDealerShown();
+        void DisplayDealer();
+        void ResetDeck();
+        void SetupRound();
+
+
+        bool DoTurn(Action choice);
+        void AssessResults();
+        void Clear();
+
+
+
 };
 
 

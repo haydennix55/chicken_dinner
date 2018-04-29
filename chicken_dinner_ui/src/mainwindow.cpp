@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "playwindow.h"
+#include "basicwindow.h"
 #include <Blackjack.h>
 #include <cmath>
 
@@ -32,6 +33,9 @@ void MainWindow::on_playButton_clicked()
 void MainWindow::on_basicButton_clicked()
 {
     //TODO: Implement visuals for simulation
+    basic = new basicwindow(this);
+    basic->show();
+    this->hide();
 }
 
 void MainWindow::on_countingButton_clicked()
