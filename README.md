@@ -13,9 +13,9 @@ These instructions will allow you to see where I am at. These will be updated as
 
 ### Prerequisites
 
-The code is currently tested on Linux and Mac OS X. On these operating systems, there should be no prereqs to build and run the source code. The GUI has been created and application has been packaged in QtCreator for Mac, QtCreator is required for dev work on the GUI.
+The code is currently tested on Linux and Mac OS X. On these operating systems, there should be no prereqs to build and run the source code. However, the fully packaged application has been packaged in QtCreator for Mac as a Mac application, so it must be run on Mac OS. In order do dev on the GUI, QtCreator is required
 
-### Downloading and Running Application
+### Downloading and Running Application on Mac OS
 
   * Clone the repo. In the main directory, there is a file simply titled "Blackjack" (or Blackjack.app). 
   * Double click this file and enjoy!
