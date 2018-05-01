@@ -13,11 +13,12 @@ These instructions will allow you to see where I am at. These will be updated as
 
 ### Prerequisites
 
-The code is currently tested on Linux and Mac OS X. On these operating systems, there should be no prereqs to build and run the source code. Because the GUI has not been packaged and deployed, it will require Qt Creator to build and run.
+The code is currently tested on Linux and Mac OS X. On these operating systems, there should be no prereqs to build and run the source code. The GUI has been created and application has been packaged in QtCreator for Mac, QtCreator is required for dev work on the GUI.
 
 ### Downloading and Running Application
 
-This section is currently not applicable. This will be filled when there is a packaged application. However, you can play the game with a GUI using QTCreator, or play the game and simulate rounds using the terminal. See 'Development'.
+  * Clone the repo. In the main directory, there is a file simply titled "Blackjack" (or Blackjack.app). 
+  * Double click this file and enjoy!
 
 ### Development
 
@@ -37,11 +38,7 @@ Start by cloning the repository to your local machine.
 
    * See above about command `make test`
 
-* __Running the App__
-
-   * You can see the currently implementation of the app using the 'Build and Run GUI' instructions below. Currently, a gameplay GUI has been implemented, so have fun! Otherwise, you can use the 'Download, Build, and Run Source Code' instructions above to play the game using a terminal text ui and simulate rounds.
-
-* __Build and Run GUI__
+* __Build and Run GUI in Editor__
 
    * Open Qt Creator
 
