@@ -29,7 +29,6 @@
 # Executables
 *.exe
 *.out
-*.app
 
 # Folders that hold executables and objects
 bin/
