@@ -39,7 +39,6 @@ public:
     QVBoxLayout *verticalLayout;
     QPushButton *playButton;
     QPushButton *basicButton;
-    QPushButton *countingButton;
     QPushButton *closeButton;
     QMenuBar *menuBar;
     QMenu *menuFile;
@@ -86,11 +85,6 @@ public:
 
         verticalLayout->addWidget(basicButton);
 
-        countingButton = new QPushButton(verticalLayoutWidget);
-        countingButton->setObjectName(QStringLiteral("countingButton"));
-
-        verticalLayout->addWidget(countingButton);
-
         closeButton = new QPushButton(verticalLayoutWidget);
         closeButton->setObjectName(QStringLiteral("closeButton"));
 
@@ -127,8 +121,7 @@ public:
         actionQuit->setText(QApplication::translate("MainWindow", "Quit", nullptr));
         pictureLabel->setText(QString());
         playButton->setText(QApplication::translate("MainWindow", "Play Blackjack", nullptr));
-        basicButton->setText(QApplication::translate("MainWindow", "Simulate Games with Basic Strategy", nullptr));
-        countingButton->setText(QApplication::translate("MainWindow", "Simulate Games with Counting Cards", nullptr));
+        basicButton->setText(QApplication::translate("MainWindow", "Simulate Games", nullptr));
         closeButton->setText(QApplication::translate("MainWindow", "Close", nullptr));
         menuFile->setTitle(QApplication::translate("MainWindow", "File", nullptr));
     } // retranslateUi
