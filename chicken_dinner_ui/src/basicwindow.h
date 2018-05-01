@@ -16,11 +16,12 @@ class basicwindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    explicit basicwindow(QWidget *parent = nullptr);
-
+    explicit basicwindow(QWidget *parent = nullptr,  int decks = 6, bool softHit = true);
 private:
      Ui::basicwindow *ui;
      QGraphicsScene *scene;
+     int decks_;
+     bool softHit_;
 
      //Pens for plotting
      QPen *blackPen = new QPen(Qt::black);

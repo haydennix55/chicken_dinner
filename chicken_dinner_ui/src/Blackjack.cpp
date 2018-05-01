@@ -344,7 +344,7 @@ Initializes the deck of given size, and an empty deck for the discard pile. It a
 initial shuffle, and burns the first card (discards it)
 @param decks - number of decks being used for the game
 */
-Game::Game(int decks) : deck_(Deck(decks)), discard_(Deck(0)), num_of_decks_(decks) {
+Game::Game(int decks, bool softHit) : deck_(Deck(decks)), discard_(Deck(0)), num_of_decks_(decks), softHit_(softHit) {
     deck_.Shuffle();
     burn_();
 }
@@ -618,10 +618,13 @@ void Game::PlayRound(Mode mode, int min_bet) {
           Clear();
           return;
     } else {
-        //dealer must hit until they have 17 or they bust. This does not take
-        //into account soft 17, which may be implemented later
-        while (dealer_score < 17 && dealer_score != 0) {
-            deal_(&dealer_);
+        while (dealer_score <= 17 && dealer_score != 0) {
+            //if dealer has hard 17 or 17 but soft hit is false, stand
+            if ((dealer_score == 17 && !dealer_.HasSoftAce()) || (dealer_score == 17 && !softHit_)) {
+                break;
+            } else {
+                deal_(&dealer_);
+            }
             dealer_score = dealer_.HandVal();
             if (dealer_score != 0){
                 std::cout << "Dealer hits and now has: " << dealer_score << std::endl;

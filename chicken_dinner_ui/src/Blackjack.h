@@ -1,4 +1,4 @@
-#ifndef _BLACKJACK_H_
+ #ifndef _BLACKJACK_H_
 #define _BLACKJACK_H_
 
 #include <vector>
@@ -119,7 +119,7 @@ struct Dealer : public Person {
 class Game {
 
     public:
-        Game(int decks);
+        Game(int decks, bool softHit);
         ~Game() {std::cout << "game deleted" << std::endl;};
         Player get_player_() { return player_; };
         Dealer get_dealer_() { return dealer_; };
@@ -138,6 +138,7 @@ class Game {
         int num_of_decks_;
         float count_;
         float true_count_;
+        bool softHit_;
         void deal_(Person *p);
         void burn_();
         void DisplayPlayer();

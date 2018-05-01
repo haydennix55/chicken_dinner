@@ -13,6 +13,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QComboBox>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
@@ -40,6 +41,10 @@ public:
     QPushButton *playButton;
     QPushButton *basicButton;
     QPushButton *closeButton;
+    QComboBox *decksDropdown;
+    QLabel *label;
+    QComboBox *softDropdown;
+    QLabel *label_2;
     QMenuBar *menuBar;
     QMenu *menuFile;
     QToolBar *mainToolBar;
@@ -57,7 +62,7 @@ public:
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         pictureLabel = new QLabel(centralWidget);
         pictureLabel->setObjectName(QStringLiteral("pictureLabel"));
-        pictureLabel->setGeometry(QRect(0, -10, 451, 371));
+        pictureLabel->setGeometry(QRect(40, -10, 451, 371));
         pictureLabel->setMaximumSize(QSize(471, 411));
         layoutWidget = new QWidget(centralWidget);
         layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
@@ -69,7 +74,7 @@ public:
         horizontalLayout->setContentsMargins(0, 0, 0, 0);
         verticalLayoutWidget = new QWidget(centralWidget);
         verticalLayoutWidget->setObjectName(QStringLiteral("verticalLayoutWidget"));
-        verticalLayoutWidget->setGeometry(QRect(110, 30, 267, 271));
+        verticalLayoutWidget->setGeometry(QRect(110, 60, 261, 241));
         verticalLayout = new QVBoxLayout(verticalLayoutWidget);
         verticalLayout->setSpacing(6);
         verticalLayout->setContentsMargins(11, 11, 11, 11);
@@ -90,10 +95,33 @@ public:
 
         verticalLayout->addWidget(closeButton);
 
+        decksDropdown = new QComboBox(centralWidget);
+        decksDropdown->addItem(QString());
+        decksDropdown->addItem(QString());
+        decksDropdown->addItem(QString());
+        decksDropdown->addItem(QString());
+        decksDropdown->addItem(QString());
+        decksDropdown->setObjectName(QStringLiteral("decksDropdown"));
+        decksDropdown->setGeometry(QRect(110, 30, 104, 26));
+        label = new QLabel(centralWidget);
+        label->setObjectName(QStringLiteral("label"));
+        label->setGeometry(QRect(110, 10, 111, 16));
+        softDropdown = new QComboBox(centralWidget);
+        softDropdown->addItem(QString());
+        softDropdown->addItem(QString());
+        softDropdown->setObjectName(QStringLiteral("softDropdown"));
+        softDropdown->setGeometry(QRect(260, 30, 104, 26));
+        label_2 = new QLabel(centralWidget);
+        label_2->setObjectName(QStringLiteral("label_2"));
+        label_2->setGeometry(QRect(250, 10, 131, 16));
         MainWindow->setCentralWidget(centralWidget);
         layoutWidget->raise();
         pictureLabel->raise();
         verticalLayoutWidget->raise();
+        decksDropdown->raise();
+        label->raise();
+        softDropdown->raise();
+        label_2->raise();
         menuBar = new QMenuBar(MainWindow);
         menuBar->setObjectName(QStringLiteral("menuBar"));
         menuBar->setGeometry(QRect(0, 0, 480, 22));
@@ -123,6 +151,17 @@ public:
         playButton->setText(QApplication::translate("MainWindow", "Play Blackjack", nullptr));
         basicButton->setText(QApplication::translate("MainWindow", "Simulate Games", nullptr));
         closeButton->setText(QApplication::translate("MainWindow", "Close", nullptr));
+        decksDropdown->setItemText(0, QApplication::translate("MainWindow", "2", nullptr));
+        decksDropdown->setItemText(1, QApplication::translate("MainWindow", "3", nullptr));
+        decksDropdown->setItemText(2, QApplication::translate("MainWindow", "4", nullptr));
+        decksDropdown->setItemText(3, QApplication::translate("MainWindow", "5", nullptr));
+        decksDropdown->setItemText(4, QApplication::translate("MainWindow", "6", nullptr));
+
+        label->setText(QApplication::translate("MainWindow", "Number of Decks", nullptr));
+        softDropdown->setItemText(0, QApplication::translate("MainWindow", "yes", nullptr));
+        softDropdown->setItemText(1, QApplication::translate("MainWindow", "no", nullptr));
+
+        label_2->setText(QApplication::translate("MainWindow", "Dealer hit on soft 17", nullptr));
         menuFile->setTitle(QApplication::translate("MainWindow", "File", nullptr));
     } // retranslateUi
 

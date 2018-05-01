@@ -10,6 +10,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    //set dropdown defaults
+    ui->decksDropdown->setCurrentText(QString::number(6));
+    ui->softDropdown->setCurrentIndex(0);
+
 }
 
 MainWindow::~MainWindow()
@@ -22,16 +27,18 @@ void MainWindow::on_closeButton_clicked()
    QApplication::quit();
 }
 
+//open gameplay window
 void MainWindow::on_playButton_clicked()
 {
-    playwindow = new PlayWindow(this);
+    playwindow = new PlayWindow(this, ui->decksDropdown->currentText().toInt(), ui->softDropdown->currentText().toStdString() == "yes");
     playwindow->show();
     this->hide();
 }
 
+//open simulation window
 void MainWindow::on_basicButton_clicked()
 {
-    basic = new basicwindow(this);
+    basic = new basicwindow(this, ui->decksDropdown->currentText().toInt(), ui->softDropdown->currentText().toStdString() == "yes");
     basic->show();
     this->hide();
 }

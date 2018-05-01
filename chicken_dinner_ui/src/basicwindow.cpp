@@ -21,9 +21,11 @@
 #include <ctime>
 #include <cstdlib>
 
-basicwindow::basicwindow(QWidget *parent) :
+basicwindow::basicwindow(QWidget *parent, int decks, bool softHit) :
     QMainWindow(parent),
-    ui(new Ui::basicwindow)
+    ui(new Ui::basicwindow),
+    decks_(decks),
+    softHit_(softHit)
 {
     //setup window and graphing area
     this->setFixedSize(700,700);
@@ -60,7 +62,7 @@ void basicwindow::on_run_clicked()
     }
 
     //Create new 6 card game
-    Game *g1 = new Game(6);
+    Game *g1 = new Game(this->decks_,this->softHit_ );
 
     //play round 2500 times and plot a point correlating to player total chips
     for (int i = 0; i < 2500; i++) {

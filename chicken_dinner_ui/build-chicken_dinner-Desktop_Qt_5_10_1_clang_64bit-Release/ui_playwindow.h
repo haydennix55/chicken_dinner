@@ -13,6 +13,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QComboBox>
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
@@ -72,6 +73,12 @@ public:
     QLabel *betDisplay;
     QLabel *hintLabel;
     QLabel *resultLabel;
+    QLabel *countLabel;
+    QLabel *trueLabel;
+    QLabel *countDisplay;
+    QLabel *trueDisplay;
+    QComboBox *betDropdown;
+    QLabel *selectBet;
     QMenuBar *menubar;
     QMenu *menuQuit;
     QStatusBar *statusbar;
@@ -88,7 +95,7 @@ public:
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
         tableLabel = new QLabel(centralwidget);
         tableLabel->setObjectName(QStringLiteral("tableLabel"));
-        tableLabel->setGeometry(QRect(-30, 0, 800, 500));
+        tableLabel->setGeometry(QRect(-20, -10, 800, 500));
         tableLabel->setBaseSize(QSize(800, 500));
         layoutWidget = new QWidget(centralwidget);
         layoutWidget->setObjectName(QStringLiteral("layoutWidget"));
@@ -276,7 +283,7 @@ public:
 
         dealButton = new QPushButton(centralwidget);
         dealButton->setObjectName(QStringLiteral("dealButton"));
-        dealButton->setGeometry(QRect(280, 40, 133, 32));
+        dealButton->setGeometry(QRect(280, 40, 141, 32));
         chipsLabel = new QLabel(centralwidget);
         chipsLabel->setObjectName(QStringLiteral("chipsLabel"));
         chipsLabel->setGeometry(QRect(30, 30, 60, 16));
@@ -295,6 +302,39 @@ public:
         resultLabel = new QLabel(centralwidget);
         resultLabel->setObjectName(QStringLiteral("resultLabel"));
         resultLabel->setGeometry(QRect(440, 20, 261, 91));
+        countLabel = new QLabel(centralwidget);
+        countLabel->setObjectName(QStringLiteral("countLabel"));
+        countLabel->setGeometry(QRect(30, 80, 60, 16));
+        trueLabel = new QLabel(centralwidget);
+        trueLabel->setObjectName(QStringLiteral("trueLabel"));
+        trueLabel->setGeometry(QRect(30, 100, 71, 16));
+        countDisplay = new QLabel(centralwidget);
+        countDisplay->setObjectName(QStringLiteral("countDisplay"));
+        countDisplay->setGeometry(QRect(80, 80, 60, 16));
+        trueDisplay = new QLabel(centralwidget);
+        trueDisplay->setObjectName(QStringLiteral("trueDisplay"));
+        trueDisplay->setGeometry(QRect(110, 100, 71, 16));
+        betDropdown = new QComboBox(centralwidget);
+        betDropdown->addItem(QString());
+        betDropdown->addItem(QString());
+        betDropdown->addItem(QString());
+        betDropdown->addItem(QString());
+        betDropdown->addItem(QString());
+        betDropdown->addItem(QString());
+        betDropdown->addItem(QString());
+        betDropdown->addItem(QString());
+        betDropdown->addItem(QString());
+        betDropdown->addItem(QString());
+        betDropdown->addItem(QString());
+        betDropdown->addItem(QString());
+        betDropdown->addItem(QString());
+        betDropdown->addItem(QString());
+        betDropdown->addItem(QString());
+        betDropdown->setObjectName(QStringLiteral("betDropdown"));
+        betDropdown->setGeometry(QRect(300, 20, 104, 26));
+        selectBet = new QLabel(centralwidget);
+        selectBet->setObjectName(QStringLiteral("selectBet"));
+        selectBet->setGeometry(QRect(320, 0, 71, 16));
         PlayWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(PlayWindow);
         menubar->setObjectName(QStringLiteral("menubar"));
@@ -354,6 +394,27 @@ public:
         betDisplay->setText(QString());
         hintLabel->setText(QString());
         resultLabel->setText(QString());
+        countLabel->setText(QApplication::translate("PlayWindow", "Count:", nullptr));
+        trueLabel->setText(QApplication::translate("PlayWindow", "True Count:", nullptr));
+        countDisplay->setText(QString());
+        trueDisplay->setText(QString());
+        betDropdown->setItemText(0, QApplication::translate("PlayWindow", "10", nullptr));
+        betDropdown->setItemText(1, QApplication::translate("PlayWindow", "20", nullptr));
+        betDropdown->setItemText(2, QApplication::translate("PlayWindow", "30", nullptr));
+        betDropdown->setItemText(3, QApplication::translate("PlayWindow", "40", nullptr));
+        betDropdown->setItemText(4, QApplication::translate("PlayWindow", "50", nullptr));
+        betDropdown->setItemText(5, QApplication::translate("PlayWindow", "60", nullptr));
+        betDropdown->setItemText(6, QApplication::translate("PlayWindow", "70", nullptr));
+        betDropdown->setItemText(7, QApplication::translate("PlayWindow", "80", nullptr));
+        betDropdown->setItemText(8, QApplication::translate("PlayWindow", "90", nullptr));
+        betDropdown->setItemText(9, QApplication::translate("PlayWindow", "100", nullptr));
+        betDropdown->setItemText(10, QApplication::translate("PlayWindow", "110", nullptr));
+        betDropdown->setItemText(11, QApplication::translate("PlayWindow", "120", nullptr));
+        betDropdown->setItemText(12, QApplication::translate("PlayWindow", "130", nullptr));
+        betDropdown->setItemText(13, QApplication::translate("PlayWindow", "140", nullptr));
+        betDropdown->setItemText(14, QApplication::translate("PlayWindow", "150", nullptr));
+
+        selectBet->setText(QApplication::translate("PlayWindow", "Select Bet: ", nullptr));
         menuQuit->setTitle(QApplication::translate("PlayWindow", "File", nullptr));
     } // retranslateUi
 
