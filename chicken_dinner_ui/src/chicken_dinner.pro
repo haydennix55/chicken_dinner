@@ -15,14 +15,17 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     playwindow.cpp \
-    Blackjack.cpp
+    Blackjack.cpp \
+    basicwindow.cpp
 
 HEADERS  += mainwindow.h \
     playwindow.h \
-    Blackjack.h
+    Blackjack.h \
+    basicwindow.h
 
 FORMS    += mainwindow.ui \
-    playwindow.ui
+    playwindow.ui \
+    basicwindow.ui
 
 DISTFILES +=
 

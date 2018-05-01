@@ -336,5 +336,308 @@ Action Player::BasicStrategy(Card* dealer_shown) {
             default : return Action::Hit; //all hands under 9
         }
     }
+
+}
+
+/**
+Initializes the deck of given size, and an empty deck for the discard pile. It also does an
+initial shuffle, and burns the first card (discards it)
+@param decks - number of decks being used for the game
+*/
+Game::Game(int decks, bool softHit) : deck_(Deck(decks)), discard_(Deck(0)), num_of_decks_(decks), softHit_(softHit) {
+    deck_.Shuffle();
+    burn_();
+}
+
+//Draw card from deck_ and add to Person's hand
+void Game::deal_(Person *p) {
+    Card *c = deck_.Draw();
+    UpdateTrueCount(c);
+    p->AddToHand(c);
+}
+
+//Draw a card from the deck and add it to the discard pile
+void Game::burn_() {
+    discard_.AddToDeck(deck_.Draw());
+}
+
+/**
+Takes action chosen and performs said Action
+@param choice - int representing the action
+@return - true if its an action that definitively ends players turn, false otherwise
+*/
+bool Game::DoTurn(Action choice) {
+
+    if (choice == Action::Stay) {
+
+        std::cout << "\nYou chose to stay.\n" ;
+        return true;
+
+    } else if (choice == Action::Hit) {
+        //add card to hand and display new hand
+        std::cout << "\nYou chose to hit. Here's your new hand.\n" ;
+        deal_(&player_);
+        DisplayPlayer();
+        DisplayDealerShown();
+        return false;
+
+    } else if (choice == Action::Double) {
+        //Double the bet, add a one and only one card to hand, show new hand
+        std::cout << "\nYou double. Here's your new hand.\n" ;
+        player_.Payout(player_.get_bet_());
+        player_.Bet(player_.get_bet_() * 2);
+        deal_(&player_);
+        DisplayPlayer();
+        DisplayDealerShown();
+        return true;
+
+    } else {
+        //split. This currently isn't implemented and will never occur (see MakeChoice)
+        std::cout << "You split" << std::endl;
+        return true;
+    }
+}
+
+/**
+Using information from the game state, including player score, dealer score, and
+their hand sizes, determines win, lose, tie, or blackjack and pays out chips accordingly
+*/
+void Game::AssessResults() {
+    int dealer_score = dealer_.HandVal();
+    int player_score = player_.HandVal();
+    int bet = player_.get_bet_();
+
+    //Blackjack, pays 3/2
+    if (player_score == 21 && dealer_score != 21) {
+        if (player_.get_hand_().size() == 2) {
+            player_.Payout(bet * 2.5);
+            std::cout << "WINNER WINNER CHICKEN DINNER!" << std::endl;
+            return;
+        }
+    }
+    if (player_score == 0) {
+        std::cout << "You busted..." << std::endl;
+    } else {
+        if (player_score > dealer_score) { //win
+            std::cout << "You win." << std::endl;
+            player_.Payout(bet * 2);
+        } else if (player_score == dealer_score) { //tie
+            std::cout << "Its a Push." << std::endl;
+            player_.Payout(bet);
+        } else {  //loss
+            if (dealer_score == 21 && dealer_.get_hand_().size() == 2){
+                std::cout << "Dealer has Blackjack!" << std::endl;
+            }
+            std::cout << "You lose." << std::endl;
+            //Because the dealer does not currently keep track of chips,
+            //no action is required. (Withdrawn from player when bet)
+        }
+    }
+}
+
+//Resets the game after a round
+void Game::Clear() {
+    std::vector<Card*> player_hand = player_.get_hand_();
+    std::vector<Card*> dealer_hand = dealer_.get_hand_();
+
+    //move players hand to discard
+    for (int i = 0; i < player_hand.size(); i++) {
+        discard_.AddToDeck(player_hand[i]);
+    }
+
+    //move dealers hand to discard
+    for (int i = 0; i < dealer_hand.size(); i++) {
+        discard_.AddToDeck(dealer_hand[i]);
+    }
+
+    //clear last rounds data
+    player_.ClearHand();
+    dealer_.ClearHand();
+    player_.Bet(0);
+
+    //These were used to ensure the deck was decrementing corrently, and that it resets properly
+    // std::cout << "Deck size: " << deck_.size() << std::endl;
+    // std::cout << "Discard size: " << discard_.size() << std::endl;
+    std::cout << "Player Chips: " << player_.get_chips_() << std::endl;
+    std::cout << "True Count: " << get_true_count_() << std::endl;
+    std::cout << std::endl << "----------------------------" << std::endl;
+
+
+}
+
+//Replaces all discarded cards to deck
+void Game::ResetDeck() {
+    for (int i = 0; i < discard_.size(); i++) {
+      deck_.AddToDeck(discard_.get_card(i));
+    }
+    discard_.ClearDeck();
+    deck_.Shuffle();
+    burn_();
+    count_ = 0;
+    true_count_ = 0;
+}
+
+/**
+The following three functions create a simple text UI. These will be unnecessary when
+GUI is created
+*/
+
+//Print out Players hand
+void Game::DisplayPlayer() {
+    //this is a placeholder for now for the UI
+    std::cout << std::endl << "Player's hand:\n--------" << std::endl << std::endl;
+    for (int i = 0; i < player_.get_hand_().size(); i++) {
+        std::cout << "  -  " << ValueStringify(player_.get_hand_()[i]->get_val()) << " of " << SuitStringify(player_.get_hand_()[i]->get_suit()) << std::endl;
+    }
+    std::cout << std::endl;
+}
+
+//Prints out Dealers hand
+void Game::DisplayDealer() {
+  std::cout << std::endl << "Dealer's hand:\n-------- " << std::endl << std::endl;
+  for (int i = 0; i < dealer_.get_hand_().size(); i++) {
+      std::cout << "  -  " << ValueStringify(dealer_.get_hand_()[i]->get_val()) << " of " << SuitStringify(dealer_.get_hand_()[i]->get_suit()) << std::endl;
+  }
+  std::cout << std::endl;
+}
+
+//Displays only the dealers face up card
+void Game::DisplayDealerShown() {
+  std::cout << std::endl << "Dealer's showing card:\n--------" << std::endl << std::endl;
+  std::cout << "  -  " << ValueStringify(dealer_.get_hand_()[1]->get_val()) << " of " << SuitStringify(dealer_.get_hand_()[1]->get_suit()) << std::endl << std::endl;
+}
+
+//Initialize the bet, the intial deal, and ensure the deck is properly stocked
+void Game::SetupRound(Mode mode, int min_bet) {
+
+    //If 4/5s of the deck has been player. This is an approximation of normal shuffling. This may be
+    //replaces with a semi-random shuffle card (usually, the dealer inserts it toward the bottom)
+    if (deck_.size() < (discard_.size() / 4)) {
+      ResetDeck();
+    }
+
+    std::cout << std::endl << "----------------------------" << std::endl;
+
+    //Variable betting for counting cards. If the true count is -1 or less, don't play.
+    //Otherwise, bet your minimum stable bet * (true count + 1)
+    if (mode == Mode::Counting) {
+        int multiplier = (round(true_count_) + 1);
+        if (multiplier <= 1) {
+           player_.Bet(0);
+        } else {
+            player_.Bet(multiplier * min_bet);
+        }
+    } else {
+      //if not playing with card counting
+      player_.Bet(min_bet);
+    }
+
+
+    std::cout << "Player's bet: " << player_.get_bet_() << std::endl;
+
+    //Deal hands alternating to player and dealer
+    deal_(&player_);
+    deal_(&dealer_);
+
+    deal_(&player_);
+    deal_(&dealer_);
+
+    //Show player hand and dealer face up card
+    DisplayPlayer();
+    DisplayDealerShown();
+
+}
+
+/**
+ * @brief Updates the true count value of the game using the Zen count methodology
+ * @param c is the last drawn card, used to update the count and therefore, the true count
+ */
+void Game::UpdateTrueCount(Card* c) {
+    switch (ValueIntify(c->get_val())) {
+        case 2:
+        case 3:
+        case 7: count_++;
+                break;
+        case 4:
+        case 5:
+        case 6: count_ += 2;
+                break;
+        case 11: count_ -= 1;
+                break;
+        case 10: count_ -= 2;
+                break;
+        default:
+                break;
+    }
+
+    float remaining_decks = ((float)deck_.size() / (num_of_decks_ * 52)) * num_of_decks_;
+
+    remaining_decks = round(remaining_decks * 2) / 2;
+
+    true_count_ = count_ / remaining_decks;
+
+}
+/**
+Plays an actual round of the game, which encompasses betting, dealing, play, payout, and clearing.
+Shuffling and resetting the deck are also implemented if the state is right
+*/
+void Game::PlayRound(Mode mode, int min_bet) {
+    //collect bet, deal, reset deck if necessary
+    SetupRound(mode, min_bet);
+    int dealer_score = dealer_.HandVal();
+    int player_score = player_.HandVal();
+
+    //Either dealer, player, or both have blackjack, so round ends
+    if (player_score == 21 || dealer_score == 21) {
+        //TODO: handle insurance if dealer has blackjack
+        AssessResults();
+        Clear();
+        return;
+    }
+
+    bool stay = false;
+    //Player makes decision until they bust (player_score != 0) or choose a turn ending action (stay or double)
+
+    Action choice;
+    while (player_score != 0 && !stay) {
+        if (mode == Mode::Basic || mode == Mode::Counting) choice = player_.BasicStrategy(dealer_.get_hand_()[1]);
+        else choice = player_.MakeChoice(dealer_.get_hand_()[1]);
+        if (choice == Action::Split) {
+            std::cout << "Split has not yet been implemented" << std::endl; //eventually this will be split functionality
+        }
+        stay = DoTurn(choice);  //true if turn ending, false if otherwise
+        player_score = player_.HandVal();
+    }
+
+    //Reveal Dealer's hand
+    DisplayDealer();
+
+    //If already busted, go to AssessResults
+    if (player_score == 0) {
+          AssessResults();
+          Clear();
+          return;
+    } else {
+        while (dealer_score <= 17 && dealer_score != 0) {
+            //if dealer has hard 17 or 17 but soft hit is false, stand
+            if ((dealer_score == 17 && !dealer_.HasSoftAce()) || (dealer_score == 17 && !softHit_)) {
+                break;
+            } else {
+                deal_(&dealer_);
+            }
+            dealer_score = dealer_.HandVal();
+            if (dealer_score != 0){
+                std::cout << "Dealer hits and now has: " << dealer_score << std::endl;
+                DisplayDealer();
+            } else {
+                std::cout << "Dealer hits and draws a " << ValueStringify(dealer_.get_hand_()[dealer_.get_hand_().size() - 1]->get_val())
+                << " of " <<  SuitStringify(dealer_.get_hand_()[dealer_.get_hand_().size() - 1]->get_suit()) << " and busts!" << std::endl;
+            }
+        }
+    }
+
+    AssessResults();
+    Clear();
+
 }
 

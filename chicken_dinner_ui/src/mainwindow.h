@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "playwindow.h"
+#include "basicwindow.h"
 #include <Blackjack.h>
 #include <cmath>
 
@@ -18,6 +19,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     PlayWindow *playwindow;
+    basicwindow *basic;
 
 
 private slots:
@@ -29,8 +31,6 @@ private slots:
 
 
     void on_basicButton_clicked();
-
-    void on_countingButton_clicked();
 
 private:
     Ui::MainWindow *ui;

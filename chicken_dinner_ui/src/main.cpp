@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <Blackjack.h>
+
 #include <cmath>
 
 int main(int argc, char *argv[])

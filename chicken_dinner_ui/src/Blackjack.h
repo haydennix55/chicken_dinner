@@ -1,4 +1,4 @@
-#ifndef _BLACKJACK_H_
+ #ifndef _BLACKJACK_H_
 #define _BLACKJACK_H_
 
 #include <vector>
@@ -104,7 +104,7 @@ struct Player : public Person {
         Action MakeChoice(Card* dealer_shown);
         Action BasicStrategy(Card* dealer_shown);
     private:
-        int chips_ = 1000;
+        int chips_ = 10000;
         int bet_ = 0;
 
 };
@@ -114,6 +114,46 @@ struct Dealer : public Person {
     public:
         Dealer() : Person() {};
     private:
+};
+
+class Game {
+
+    public:
+        Game(int decks, bool softHit);
+        ~Game() {std::cout << "game deleted" << std::endl;};
+        Player get_player_() { return player_; };
+        Dealer get_dealer_() { return dealer_; };
+        Deck get_deck_() { return deck_; };
+        Deck get_discard_() { return discard_; };
+        float get_true_count_() { return true_count_; };
+
+        void UpdateTrueCount(Card* c);
+        void PlayRound(Mode mode, int min_bet);
+
+    private:
+        Player player_;
+        Dealer dealer_;
+        Deck deck_;
+        Deck discard_;
+        int num_of_decks_;
+        float count_;
+        float true_count_;
+        bool softHit_;
+        void deal_(Person *p);
+        void burn_();
+        void DisplayPlayer();
+        void DisplayDealerShown();
+        void DisplayDealer();
+        void ResetDeck();
+        void SetupRound(Mode mode, int min_bet);
+
+
+        bool DoTurn(Action choice);
+        void AssessResults();
+        void Clear();
+
+
+
 };
 
 

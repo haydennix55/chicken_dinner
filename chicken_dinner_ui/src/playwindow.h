@@ -14,7 +14,7 @@ class PlayWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit PlayWindow(QWidget *parent = 0, int decks = 6);
+    explicit PlayWindow(QWidget *parent = 0, int decks = 6, bool softHit = true);
     ~PlayWindow();
     QList<QPixmap> cardHolder;
     int deckValues[52];
@@ -56,14 +56,16 @@ private:
     int num_of_decks_;
     float count_;
     float true_count_;
+    bool softHit_;
 
-    void deal_(Person *p);
+    void deal_(Player *p);
+    void deal_(Dealer *d);
     void burn_();
     void DisplayPlayer();
     void DisplayDealerShown();
     void DisplayDealer();
     void ResetDeck();
-    void SetupRound();
+    void SetupRound(int bet);
     int DetermineImageIndex(Value v, Suit s);
     void ShowCard(int index, int label);
     void ShowCardDealer(int index, int label);

@@ -104,7 +104,7 @@ struct Player : public Person {
         Action MakeChoice(Card* dealer_shown);
         Action BasicStrategy(Card* dealer_shown);
     private:
-        int chips_ = 100000;
+        int chips_ = 10000;
         int bet_ = 0;
 
 };

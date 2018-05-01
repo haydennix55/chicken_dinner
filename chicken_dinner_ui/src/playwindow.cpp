@@ -10,29 +10,46 @@
 #include <cmath>
 #include <QString>
 
-PlayWindow::PlayWindow(QWidget *parent, int decks) :
+PlayWindow::PlayWindow(QWidget *parent, int decks, bool softHit) :
     QMainWindow(parent),
     ui(new Ui::PlayWindow),
     deck_(Deck(decks)),
     discard_(Deck(0)),
-    num_of_decks_(decks)
+    num_of_decks_(decks),
+    softHit_(softHit),
+    count_(0),
+    true_count_(0)
 {
+    //setup background
     ui->setupUi(this);
     QPixmap pix(":/images/images/blackjack_table.png");
     ui->tableLabel->setPixmap(pix);
+
+    //styling
     ui->tableLabel->lower();
     ui->chipsLabel->setStyleSheet("QLabel {color : white; }");
     ui->betLabel->setStyleSheet("QLabel {color : white; }");
     ui->chipsDisplay->setStyleSheet("QLabel {color : white; }");
     ui->betDisplay->setStyleSheet("QLabel {color : white; }");
     ui->hintLabel->setStyleSheet("QLabel {color : white; }");
+    ui->countLabel->setStyleSheet("QLabel {color : white; }");
+    ui->trueLabel->setStyleSheet("QLabel {color : white; }");
+    ui->countDisplay->setStyleSheet("QLabel {color: white;}");
+    ui->trueDisplay->setStyleSheet("QLabel {color: white;}");
+    ui->selectBet->setStyleSheet("QLabel {color: white;}");
+
+    //default values of ui elements
     ui->chipsDisplay->setText(QString::number(player_.get_chips_()));
     ui->betDisplay->setText(QString::number(player_.get_bet_()));
+    ui->betDropdown->setCurrentText(QString::number(10));
+
     this->statusBar()->setSizeGripEnabled(false);
     this->setFixedSize(690,500);
-    loadList();
+    loadList(); //load in card images
     deck_.Shuffle();
     burn_();
+
+    //disabled until deal button is clicked
     ui->stayButton->setEnabled(false);
     ui->hitButton->setEnabled(false);
     ui->doubleButton->setEnabled(false);
@@ -158,10 +175,24 @@ void PlayWindow::ShowCardDealer(int index, int label) {
 }
 
 //Draw card from deck_ and add to Person's hand
-void PlayWindow::deal_(Person *p) {
+void PlayWindow::deal_(Player *p) {
     Card *c = deck_.Draw();
     UpdateTrueCount(c);
     p->AddToHand(c);
+    ui->countDisplay->setText(QString::number(count_));
+    ui->trueDisplay->setText(QString::number(true_count_));
+}
+
+
+void PlayWindow::deal_(Dealer *d) {
+    Card *c = deck_.Draw();
+    d->AddToHand(c);
+    //for dealer, don't include face down card in the count
+    if (d->get_hand_().size() != 2) {
+        UpdateTrueCount(c);
+    }
+    ui->countDisplay->setText(QString::number(count_));
+    ui->trueDisplay->setText(QString::number(true_count_));
 }
 
 //Draw a card from the deck and add it to the discard pile
@@ -253,7 +284,7 @@ void PlayWindow::DisplayDealerShown() {
 }
 
 //Initialize the bet, the intial deal, and ensure the deck is properly stocked
-void PlayWindow::SetupRound() {
+void PlayWindow::SetupRound(int bet) {
     //ensure card pngs from previous game are cleared
     ui->card0Label->clear();
     ui->card1Label->clear();
@@ -276,6 +307,7 @@ void PlayWindow::SetupRound() {
     ui->card7Label_2->clear();
     ui->card8Label_2->clear();
     ui->card9Label_2->clear();
+    ui->resultLabel->clear();
 
     //If 4/5s of the deck has been player. This is an approximation of normal shuffling. This may be
     //replaces with a semi-random shuffle card (usually, the dealer inserts it toward the bottom)
@@ -283,7 +315,7 @@ void PlayWindow::SetupRound() {
       ResetDeck();
     }
 
-    player_.Bet(10);
+    player_.Bet(bet);
 
     std::cout << "Player's bet: " << player_.get_bet_() << std::endl;
 
@@ -372,11 +404,16 @@ void PlayWindow::DoTurn(Action choice) {
 
 //Dealer continutes to hit until they have 17 (must hit on soft 17)
 void PlayWindow::DealerTurn() {
+    //update count as dealer face down card is revealed
+    UpdateTrueCount(dealer_.get_hand_()[1]);
+    ui->countDisplay->setText(QString::number(count_));
+    ui->trueDisplay->setText(QString::number(true_count_));
     while (true) {
         DisplayDealer();
         if (dealer_.HandVal() == 0 || dealer_.HandVal() > 17) {
             break;
-        } else if (dealer_.HandVal() == 17 && !dealer_.HasSoftAce()){
+        } else if ((dealer_.HandVal() == 17 && !dealer_.HasSoftAce()) || (dealer_.HandVal() == 17 && !softHit_)){
+            //dealer has hard 17 or arent required to hit on soft 17
             break;
         } else {
             // dealer has less than 17 or a soft 17
@@ -387,6 +424,10 @@ void PlayWindow::DealerTurn() {
 
 //Determine Payouts and finalize ui
 void PlayWindow::AssessResults() {
+
+    QPixmap win(":/images/images/win.png");
+    QPixmap lose(":/images/images/lose.png");
+    QPixmap push(":/images/images/push.png");
 
     //disable action buttons
     ui->hitButton->setEnabled(false);
@@ -403,23 +444,28 @@ void PlayWindow::AssessResults() {
         if (player_.get_hand_().size() == 2) {
             player_.Payout(bet * 2.5);
             std::cout << "WINNER WINNER CHICKEN DINNER!" << std::endl;
+            this->ui->resultLabel->setPixmap(win);
             return;
         }
     }
     if (player_score == 0) {
         std::cout << "You busted..." << std::endl;
+        this->ui->resultLabel->setPixmap(lose);
     } else {
         if (player_score > dealer_score) { //win
             std::cout << "You win." << std::endl;
+            this->ui->resultLabel->setPixmap(win);
             player_.Payout(bet * 2);
         } else if (player_score == dealer_score) { //tie
             std::cout << "Its a Push." << std::endl;
+            this->ui->resultLabel->setPixmap(push);
             player_.Payout(bet);
         } else {  //loss
             if (dealer_score == 21 && dealer_.get_hand_().size() == 2){
                 std::cout << "Dealer has Blackjack!" << std::endl;
             }
             std::cout << "You lose." << std::endl;
+            this->ui->resultLabel->setPixmap(lose);
             //Because the dealer does not currently keep track of chips,
             //no action is required. (Withdrawn from player when bet)
         }
@@ -566,7 +612,8 @@ void PlayWindow::on_actionQuit_triggered()
 //Set up round and check for blackjacks
 void PlayWindow::on_dealButton_released()
 {
-    SetupRound();
+    int bet = ui->betDropdown->currentText().toInt();
+    SetupRound(bet);
 
     //Either dealer, player, or both have blackjack, so round ends
     if (player_.HandVal() == 21 || dealer_.HandVal() == 21) {
