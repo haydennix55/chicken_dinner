@@ -7,34 +7,290 @@
     <x>0</x>
     <y>0</y>
     <width>712</width>
-    <height>533</height>
+    <height>710</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>chicken_dinner</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QPushButton" name="run">
     <property name="geometry">
      <rect>
-      <x>0</x>
+      <x>290</x>
       <y>0</y>
       <width>151</width>
       <height>61</height>
      </rect>
     </property>
     <property name="text">
-     <string>Run Sim</string>
+     <string>Run 2500 Games</string>
     </property>
    </widget>
    <widget class="QGraphicsView" name="graphicsView">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>40</x>
       <y>60</y>
       <width>650</width>
       <height>421</height>
      </rect>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="countButtton">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>490</y>
+      <width>161</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Counting Cards</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>450</y>
+      <width>60</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>7000</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>380</y>
+      <width>60</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>8000</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>240</y>
+      <width>60</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>10000</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>310</y>
+      <width>60</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>9000</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>170</y>
+      <width>60</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>11000</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_6">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>100</y>
+      <width>60</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>12000</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_7">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>40</y>
+      <width>60</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>13000</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="minBet">
+    <property name="geometry">
+     <rect>
+      <x>330</x>
+      <y>490</y>
+      <width>104</width>
+      <height>26</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>5</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>10</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>15</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>20</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>25</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="label_8">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>490</y>
+      <width>91</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Minimum Bet:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_9">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>10</y>
+      <width>60</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Chips:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_10">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>530</y>
+      <width>471</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Every run creates a new game and player that starts with 10,000 chips</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_11">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>550</y>
+      <width>611</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>When the &quot;counting cards&quot; radio button is unselected, 2500 rounds are played with basic strategy,</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_12">
+    <property name="geometry">
+     <rect>
+      <x>60</x>
+      <y>570</y>
+      <width>611</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>and if it is selected, 2500 rounds are played with betting that varies depending on the true count,</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_13">
+    <property name="geometry">
+     <rect>
+      <x>70</x>
+      <y>590</y>
+      <width>591</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>which is the current count / num of decks remaining. You can also change the minimum bet. </string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_14">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>610</y>
+      <width>601</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Keep in mind, even counting cards only gives a slight advantage. Betting big could mean losing big.</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_15">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>490</y>
+      <width>71</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Final Chips:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="finalchips">
+    <property name="geometry">
+     <rect>
+      <x>540</x>
+      <y>490</y>
+      <width>60</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
   </widget>

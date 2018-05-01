@@ -67,14 +67,7 @@
      <item>
       <widget class="QPushButton" name="basicButton">
        <property name="text">
-        <string>Simulate Games with Basic Strategy</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="countingButton">
-       <property name="text">
-        <string>Simulate Games with Counting Cards</string>
+        <string>Simulate Games</string>
        </property>
       </widget>
      </item>

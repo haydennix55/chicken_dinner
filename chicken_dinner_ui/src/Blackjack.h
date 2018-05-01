@@ -128,7 +128,7 @@ class Game {
         float get_true_count_() { return true_count_; };
 
         void UpdateTrueCount(Card* c);
-        void PlayRound(Mode mode);
+        void PlayRound(Mode mode, int min_bet);
 
     private:
         Player player_;
@@ -144,7 +144,7 @@ class Game {
         void DisplayDealerShown();
         void DisplayDealer();
         void ResetDeck();
-        void SetupRound();
+        void SetupRound(Mode mode, int min_bet);
 
 
         bool DoTurn(Action choice);

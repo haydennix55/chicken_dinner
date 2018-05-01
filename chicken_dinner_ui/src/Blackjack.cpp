@@ -508,7 +508,7 @@ void Game::DisplayDealerShown() {
 }
 
 //Initialize the bet, the intial deal, and ensure the deck is properly stocked
-void Game::SetupRound() {
+void Game::SetupRound(Mode mode, int min_bet) {
 
     //If 4/5s of the deck has been player. This is an approximation of normal shuffling. This may be
     //replaces with a semi-random shuffle card (usually, the dealer inserts it toward the bottom)
@@ -519,16 +519,18 @@ void Game::SetupRound() {
     std::cout << std::endl << "----------------------------" << std::endl;
     //when a counting cards comes in, this can change to take a user input, or be determined
     //by the strategy
-    int multiplier = (round(true_count_) + 1);
-    if (multiplier <= 1) {
-       player_.Bet(0);
+
+    if (mode == Mode::Counting) {
+        int multiplier = (round(true_count_) + 1);
+        if (multiplier <= 1) {
+           player_.Bet(0);
+        } else {
+            player_.Bet(multiplier * min_bet);
+        }
     } else {
-        player_.Bet(multiplier * 10);
+      player_.Bet(min_bet);
     }
 
-    //player_.Bet(10);
-
-    //player_.Bet(30);
 
     std::cout << "Player's bet: " << player_.get_bet_() << std::endl;
 
@@ -578,9 +580,9 @@ void Game::UpdateTrueCount(Card* c) {
 Plays an actual round of the game, which encompasses betting, dealing, play, payout, and clearing.
 Shuffling and resetting the deck are also implemented if the state is right
 */
-void Game::PlayRound(Mode mode) {
+void Game::PlayRound(Mode mode, int min_bet) {
     //collect bet, deal, reset deck if necessary
-    SetupRound();
+    SetupRound(mode, min_bet);
     int dealer_score = dealer_.HandVal();
     int player_score = player_.HandVal();
 
@@ -601,7 +603,7 @@ void Game::PlayRound(Mode mode) {
 
     Action choice;
     while (player_score != 0 && !stay) {
-        if (mode == Mode::Basic) choice = player_.BasicStrategy(dealer_.get_hand_()[1]);
+        if (mode == Mode::Basic || mode == Mode::Counting) choice = player_.BasicStrategy(dealer_.get_hand_()[1]);
         else choice = player_.MakeChoice(dealer_.get_hand_()[1]);
         if (choice == Action::Split) {
             std::cout << "Split has not yet been implemented" << std::endl; //eventually this will be split functionality
