@@ -3,8 +3,7 @@
 
    1. What I Planned On Doing
 
-     I would like to finalize all the UI elements to show more information (results announcement, blackjacks, etc.), as well as add in some variables the player can choose from. I will also implement the UI to show some kind of information with the simulations of rounds with basic strategy and counting cards. I will need to research more about the betting
-     strategies in Zen count, as that is what makes a real difference to the outcomes. I will also package it as an application so it doesn't need to be opened in QT Creator :)
+I would like to finalize all the UI elements to show more information (results announcement, blackjacks, etc.), as well as add in some variables the player can choose from. I will also implement the UI to show some kind of information with the simulations of rounds with basic strategy and counting cards. I will need to research more about the betting strategies in Zen count, as that is what makes a real difference to the outcomes. I will also package it as an application so it doesn't need to be opened in QT Creator :)
 
 
    2. What I Actually Accomplished
