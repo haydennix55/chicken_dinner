@@ -276,6 +276,7 @@ void PlayWindow::SetupRound() {
     ui->card7Label_2->clear();
     ui->card8Label_2->clear();
     ui->card9Label_2->clear();
+    ui->resultLabel->clear();
 
     //If 4/5s of the deck has been player. This is an approximation of normal shuffling. This may be
     //replaces with a semi-random shuffle card (usually, the dealer inserts it toward the bottom)
@@ -388,6 +389,10 @@ void PlayWindow::DealerTurn() {
 //Determine Payouts and finalize ui
 void PlayWindow::AssessResults() {
 
+    QPixmap win(":/images/images/win.png");
+    QPixmap lose(":/images/images/lose.png");
+    QPixmap push(":/images/images/push.png");
+
     //disable action buttons
     ui->hitButton->setEnabled(false);
     ui->doubleButton->setEnabled(false);
@@ -403,23 +408,28 @@ void PlayWindow::AssessResults() {
         if (player_.get_hand_().size() == 2) {
             player_.Payout(bet * 2.5);
             std::cout << "WINNER WINNER CHICKEN DINNER!" << std::endl;
+            this->ui->resultLabel->setPixmap(win);
             return;
         }
     }
     if (player_score == 0) {
         std::cout << "You busted..." << std::endl;
+        this->ui->resultLabel->setPixmap(lose);
     } else {
         if (player_score > dealer_score) { //win
             std::cout << "You win." << std::endl;
+            this->ui->resultLabel->setPixmap(win);
             player_.Payout(bet * 2);
         } else if (player_score == dealer_score) { //tie
             std::cout << "Its a Push." << std::endl;
+            this->ui->resultLabel->setPixmap(push);
             player_.Payout(bet);
         } else {  //loss
             if (dealer_score == 21 && dealer_.get_hand_().size() == 2){
                 std::cout << "Dealer has Blackjack!" << std::endl;
             }
             std::cout << "You lose." << std::endl;
+            this->ui->resultLabel->setPixmap(lose);
             //Because the dealer does not currently keep track of chips,
             //no action is required. (Withdrawn from player when bet)
         }

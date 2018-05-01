@@ -727,6 +727,7 @@ qrc_images.cpp: ../src/images.qrc \
 		../src/images/bg.jpg \
 		../src/images/lose.png \
 		../src/images/win.png \
+		../src/images/push.png \
 		../src/images/blackjack_table.png \
 		../src/images/cards/king_of_diamonds2.png \
 		../src/images/cards/5_of_diamonds.png \
@@ -799,6 +800,17 @@ moc_mainwindow.cpp: ../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Heade
 		../../../../Qt/5.10.1/clang_64/lib/QtCore.framework/Headers/QDebug \
 		../../../../Qt/5.10.1/clang_64/lib/QtCore.framework/Headers/qdebug.h \
 		../src/Blackjack.h \
+		../src/basicwindow.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtCore.framework/Headers/QObject \
+		../../../../Qt/5.10.1/clang_64/lib/QtCore.framework/Headers/qobject.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/QWidget \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qwidget.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/QGraphicsScene \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qgraphicsscene.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/QGraphicsView \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qgraphicsview.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/QGraphicsItem \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qgraphicsitem.h \
 		../src/mainwindow.h \
 		moc_predefs.h \
 		../../../../Qt/5.10.1/clang_64/bin/moc
@@ -820,6 +832,12 @@ moc_basicwindow.cpp: ../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Head
 		../../../../Qt/5.10.1/clang_64/lib/QtCore.framework/Headers/qobject.h \
 		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/QWidget \
 		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qwidget.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/QGraphicsScene \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qgraphicsscene.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/QGraphicsView \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qgraphicsview.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/QGraphicsItem \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qgraphicsitem.h \
 		../src/basicwindow.h \
 		moc_predefs.h \
 		../../../../Qt/5.10.1/clang_64/bin/moc
@@ -863,6 +881,17 @@ main.o: ../src/main.cpp ../src/mainwindow.h \
 		../../../../Qt/5.10.1/clang_64/lib/QtCore.framework/Headers/QDebug \
 		../../../../Qt/5.10.1/clang_64/lib/QtCore.framework/Headers/qdebug.h \
 		../src/Blackjack.h \
+		../src/basicwindow.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtCore.framework/Headers/QObject \
+		../../../../Qt/5.10.1/clang_64/lib/QtCore.framework/Headers/qobject.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/QWidget \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qwidget.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/QGraphicsScene \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qgraphicsscene.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/QGraphicsView \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qgraphicsview.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/QGraphicsItem \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qgraphicsitem.h \
 		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/QApplication \
 		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qapplication.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../src/main.cpp
@@ -874,6 +903,17 @@ mainwindow.o: ../src/mainwindow.cpp ../src/mainwindow.h \
 		../../../../Qt/5.10.1/clang_64/lib/QtCore.framework/Headers/QDebug \
 		../../../../Qt/5.10.1/clang_64/lib/QtCore.framework/Headers/qdebug.h \
 		../src/Blackjack.h \
+		../src/basicwindow.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtCore.framework/Headers/QObject \
+		../../../../Qt/5.10.1/clang_64/lib/QtCore.framework/Headers/qobject.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/QWidget \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qwidget.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/QGraphicsScene \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qgraphicsscene.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/QGraphicsView \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qgraphicsview.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/QGraphicsItem \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qgraphicsitem.h \
 		ui_mainwindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../src/mainwindow.cpp
 
@@ -899,7 +939,23 @@ basicwindow.o: ../src/basicwindow.cpp ../src/basicwindow.h \
 		../../../../Qt/5.10.1/clang_64/lib/QtCore.framework/Headers/QObject \
 		../../../../Qt/5.10.1/clang_64/lib/QtCore.framework/Headers/qobject.h \
 		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/QWidget \
-		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qwidget.h
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qwidget.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/QGraphicsScene \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qgraphicsscene.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/QGraphicsView \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qgraphicsview.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/QGraphicsItem \
+		../../../../Qt/5.10.1/clang_64/lib/QtWidgets.framework/Headers/qgraphicsitem.h \
+		ui_basicwindow.h \
+		../src/playwindow.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtCore.framework/Headers/QDebug \
+		../../../../Qt/5.10.1/clang_64/lib/QtCore.framework/Headers/qdebug.h \
+		../src/Blackjack.h \
+		ui_playwindow.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtGui.framework/Headers/QList \
+		../../../../Qt/5.10.1/clang_64/lib/QtGui.framework/Headers/qevent.h \
+		../../../../Qt/5.10.1/clang_64/lib/QtCore.framework/Headers/QString \
+		../../../../Qt/5.10.1/clang_64/lib/QtCore.framework/Headers/qstring.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o basicwindow.o ../src/basicwindow.cpp
 
 qrc_images.o: qrc_images.cpp 

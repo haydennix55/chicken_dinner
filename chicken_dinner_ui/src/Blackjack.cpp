@@ -520,8 +520,8 @@ void Game::SetupRound() {
     //when a counting cards comes in, this can change to take a user input, or be determined
     //by the strategy
     int multiplier = (round(true_count_) + 1);
-    if (multiplier < 0) {
-       player_.Bet(10);
+    if (multiplier <= 1) {
+       player_.Bet(0);
     } else {
         player_.Bet(multiplier * 10);
     }

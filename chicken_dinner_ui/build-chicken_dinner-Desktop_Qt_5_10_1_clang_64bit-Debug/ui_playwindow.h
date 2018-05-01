@@ -71,6 +71,7 @@ public:
     QLabel *chipsDisplay;
     QLabel *betDisplay;
     QLabel *hintLabel;
+    QLabel *resultLabel;
     QMenuBar *menubar;
     QMenu *menuQuit;
     QStatusBar *statusbar;
@@ -291,6 +292,9 @@ public:
         hintLabel = new QLabel(centralwidget);
         hintLabel->setObjectName(QStringLiteral("hintLabel"));
         hintLabel->setGeometry(QRect(30, 70, 211, 16));
+        resultLabel = new QLabel(centralwidget);
+        resultLabel->setObjectName(QStringLiteral("resultLabel"));
+        resultLabel->setGeometry(QRect(440, 20, 261, 91));
         PlayWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(PlayWindow);
         menubar->setObjectName(QStringLiteral("menubar"));
@@ -349,6 +353,7 @@ public:
         chipsDisplay->setText(QString());
         betDisplay->setText(QString());
         hintLabel->setText(QString());
+        resultLabel->setText(QString());
         menuQuit->setTitle(QApplication::translate("PlayWindow", "File", nullptr));
     } // retranslateUi
 

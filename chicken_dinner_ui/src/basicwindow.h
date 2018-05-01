@@ -22,6 +22,8 @@ private:
      Ui::basicwindow *ui;
      QGraphicsScene *scene;
      QPen *blackPen = new QPen(Qt::black);
+     QPen *greenPen = new QPen(Qt::green);
+     QPen *redPen = new QPen(Qt::red);
 
 signals:
 

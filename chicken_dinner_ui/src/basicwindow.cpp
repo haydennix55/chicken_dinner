@@ -53,6 +53,10 @@ void basicwindow::on_run_clicked()
         g1->PlayRound(Mode::Basic);
         float y = ((float)g1->get_player_().get_chips_() / 15) - 565;
         float x = (float)i/2500.0;
-        ui->graphicsView->scene()->addEllipse((float)x*650.0,y,1,1,*blackPen);
+        if (g1->get_player_().get_chips_() > 10000){
+            ui->graphicsView->scene()->addEllipse((float)x*650.0,y,1,1,*greenPen);
+        } else {
+            ui->graphicsView->scene()->addEllipse((float)x*650.0,y,1,1,*redPen);
+        }
     }
 }

@@ -59,5 +59,6 @@
         <file>images/cards/queen_of_spades2.png</file>
         <file>images/blackjack_table.png</file>
         <file>images/cards/back.png</file>
+        <file>images/push.png</file>
     </qresource>
 </RCC>
