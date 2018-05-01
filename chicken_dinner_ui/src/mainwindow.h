@@ -32,8 +32,6 @@ private slots:
 
     void on_basicButton_clicked();
 
-    void on_countingButton_clicked();
-
 private:
     Ui::MainWindow *ui;
 };

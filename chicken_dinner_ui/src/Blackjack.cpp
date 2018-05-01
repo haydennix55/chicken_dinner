@@ -517,9 +517,9 @@ void Game::SetupRound(Mode mode, int min_bet) {
     }
 
     std::cout << std::endl << "----------------------------" << std::endl;
-    //when a counting cards comes in, this can change to take a user input, or be determined
-    //by the strategy
 
+    //Variable betting for counting cards. If the true count is -1 or less, don't play.
+    //Otherwise, bet your minimum stable bet * (true count + 1)
     if (mode == Mode::Counting) {
         int multiplier = (round(true_count_) + 1);
         if (multiplier <= 1) {
@@ -528,6 +528,7 @@ void Game::SetupRound(Mode mode, int min_bet) {
             player_.Bet(multiplier * min_bet);
         }
     } else {
+      //if not playing with card counting
       player_.Bet(min_bet);
     }
 
@@ -586,8 +587,6 @@ void Game::PlayRound(Mode mode, int min_bet) {
     int dealer_score = dealer_.HandVal();
     int player_score = player_.HandVal();
 
-    //TODO: insurance offer if dealer_.get_hand_()[1]->get_val() == Value::A
-
     //Either dealer, player, or both have blackjack, so round ends
     if (player_score == 21 || dealer_score == 21) {
         //TODO: handle insurance if dealer has blackjack
@@ -595,8 +594,6 @@ void Game::PlayRound(Mode mode, int min_bet) {
         Clear();
         return;
     }
-
-    //TODO: handle insurance if dealer does not have blackjack
 
     bool stay = false;
     //Player makes decision until they bust (player_score != 0) or choose a turn ending action (stay or double)
